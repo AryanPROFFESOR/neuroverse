@@ -6,48 +6,6 @@
 // ── THEORY CARDS DATA ───────────────────────────────────────
 const THEORIES = [
   {
-    label: 'Computational Neuroscience',
-    title: 'The Free Energy Principle',
-    summary: 'Friston\'s unified theory proposes that biological systems resist disorder by minimising free energy — essentially the surprise of sensory input. Perception is inference; action is the resolution of prediction error.',
-    equation: 'F = E_q[log q(z) - log p(x,z)] ≥ -log p(x)',
-    tags: ['theory','neuro'], color: '#e5e5e5'
-  },
-  {
-    label: 'Neural Coding',
-    title: 'Sparse Distributed Representations',
-    summary: 'Information in the brain is encoded not by individual neurons but by patterns of activity across populations. Sparsity — few neurons active at once — maximises capacity and reduces interference.',
-    equation: 'I(X;Y) = H(Y) - H(Y|X)',
-    tags: ['neuro','theory'], color: '#d4d4d4'
-  },
-  {
-    label: 'Molecular Biology',
-    title: 'Epigenetic Memory Encoding',
-    summary: 'DNA methylation and histone modification create heritable changes in gene expression without altering sequence. The brain uses these mechanisms to encode long-term memories at the molecular level.',
-    equation: 'CH₃ + DNA → 5-methylcytosine (5mC)',
-    tags: ['bio','neuro'], color: '#bdbdbd'
-  },
-  {
-    label: 'Developmental Biology',
-    title: 'Pluripotency & Lineage Commitment',
-    summary: 'Stem cells balance self-renewal against differentiation through transcription factor networks (Oct4, Sox2, Nanog) and epigenetic remodeling. Splicing errors in these programs — as in minigene assays for developmental syndromes — can misroute cell fate entirely.',
-    equation: 'dC/dt = f(TF) − δC, C = commitment state',
-    tags: ['bio','theory'], color: '#f0f0f0'
-  },
-  {
-    label: 'Systems Neuroscience',
-    title: 'Global Workspace Theory',
-    summary: 'Baars\' GWT proposes consciousness arises when information is broadcast widely across the brain via a "global workspace." Unconscious processing is modular; consciousness is the integration of selected contents.',
-    equation: 'GW ≡ {x : broadcast(x) → all modules}',
-    tags: ['neuro','theory'], color: '#cfcfcf'
-  },
-  {
-    label: 'Information Theory',
-    title: 'Integrated Information Theory (IIT)',
-    summary: 'Tononi\'s IIT defines consciousness as integrated information (Φ). A system is conscious to the degree it cannot be decomposed into independent parts — deeply controversial, deeply interesting.',
-    equation: 'Φ = min over bipartitions φ(A→B) + φ(B→A)',
-    tags: ['theory','neuro'], color: '#a8a8a8'
-  },
-  {
     label: 'Custom Tooling',
     title: 'SriC — Out-of-Core Sparse Genomics Format',
     summary: 'A binary storage format for single-cell RNA-seq data, built to outperform HDF5/.h5ad on the datasets I actually work with. Dynamic chunking, memory-mapping, and a Zero-Inflated Negative Binomial estimator let it stream billion-element matrices without ever loading them fully into RAM — >1.5× smaller on disk than .h5ad, with microsecond-level single-gene queries and bit-exact round-trip reconstruction (max_err = 0.00e+00) validated on real interneuron datasets.',
@@ -58,6 +16,7 @@ const THEORIES = [
 
 const theoryGrid = document.getElementById('theoryGrid');
 if (theoryGrid) {
+  if (THEORIES.length === 1) theoryGrid.classList.add('theory-grid--single');
   theoryGrid.innerHTML = THEORIES.map((t, i) => `
     <div class="theory-card" style="animation-delay:${i*0.08}s" data-reveal data-delay="${i+1}">
       <div class="theory-card__glow" style="background:${t.color}"></div>
@@ -204,7 +163,7 @@ if (predCanvas) {
   drawPredictive();
 }
 
-// ── PAGE HERO (DNA morph canvas) ─────────────────────────────
+// ── PAGE HERO (rotating brain particle cloud) ────────────────
 const researchCanvas = document.getElementById('researchCanvas');
 const pageHero = document.querySelector('.page-hero');
 const pageHeroContent = document.querySelector('.page-intro__content');
@@ -229,22 +188,46 @@ function createShapeArray(count, builder) {
   return data;
 }
 
-function generateHelixPoint(i, count) {
-  const strand = i % 2 === 0 ? 1 : -1;
-  const phase = i / count * Math.PI * 18;
-  const y = lerp(-2.3, 2.3, i / (count - 1));
-  const radial = 0.75 + 0.15 * Math.sin(i * 0.17);
-  return [
-    Math.cos(phase) * radial + strand * 0.22,
-    y,
-    Math.sin(phase) * radial * strand,
-  ];
+// Two wrinkled hemispheres split by a central longitudinal fissure —
+// a stylized particle brain, standing in for the old DNA-helix shape.
+function generateBrainPoint(i) {
+  const hemisphere = i % 2 === 0 ? 1 : -1;
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+
+  // Base ellipsoid proportions (wider front-to-back than top-to-bottom)
+  const rx = 1.15, ry = 0.98, rz = 1.5;
+
+  // Layered noise simulates cortical folds (gyri / sulci)
+  const wrinkle =
+    0.11 * Math.sin(theta * 9 + phi * 6) +
+    0.07 * Math.sin(theta * 15 - phi * 9 + hemisphere * 1.3) +
+    0.05 * Math.sin(phi * 22 + theta * 4) +
+    0.03 * Math.sin(theta * 30 + phi * 2);
+
+  const r = 1 + wrinkle;
+
+  let x = r * rx * Math.sin(phi) * Math.cos(theta);
+  let y = r * ry * Math.cos(phi);
+  let z = r * rz * Math.sin(phi) * Math.sin(theta);
+
+  // Split into two hemispheres with a central fissure gap
+  x = hemisphere * (Math.abs(x) * 0.86 + 0.16);
+
+  // Taper and flatten the underside slightly (brainstem region)
+  if (y < -0.5) {
+    y = -0.5 - (Math.abs(y) - 0.5) * 0.4;
+    x *= 0.72;
+    z *= 0.72;
+  }
+
+  return [x, y, z];
 }
 
 if (researchCanvas && window.THREE) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
-  camera.position.z = 4.7;
+  camera.position.z = 4.2;
 
   const renderer = new THREE.WebGLRenderer({ canvas: researchCanvas, alpha: true, antialias: true });
   renderer.setClearColor(0x000000, 0);
@@ -253,9 +236,9 @@ if (researchCanvas && window.THREE) {
   const particleCount = 15000;
   const geometry = new THREE.BufferGeometry();
   const position = new Float32Array(particleCount * 3);
-  const shapeHelix = createShapeArray(particleCount, generateHelixPoint);
-  // Start already in the DNA double-helix formation — no random/sphere "mess" state.
-  position.set(shapeHelix);
+  const shapeBrain = createShapeArray(particleCount, generateBrainPoint);
+  // Start already in the brain formation — no random/sphere "mess" state.
+  position.set(shapeBrain);
 
   geometry.setAttribute('position', new THREE.BufferAttribute(position, 3));
 
@@ -269,7 +252,7 @@ if (researchCanvas && window.THREE) {
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
   const material = new THREE.PointsMaterial({
-    size: 0.045,
+    size: 0.04,
     transparent: true,
     opacity: 0.85,
     depthWrite: false,
@@ -310,14 +293,14 @@ if (researchCanvas && window.THREE) {
   }
 
   function updateMorph(progress) {
-    // The particle cloud stays in its DNA double-helix formation at all times —
-    // scroll only gently tightens/loosens the strand radius, it never dissolves into noise.
+    // The particle cloud stays in its brain formation at all times —
+    // scroll only gently tightens/loosens it, it never dissolves into noise.
     const tighten = 1 - 0.12 * progress;
     for (let i = 0; i < particleCount; i++) {
       const idx = i * 3;
-      position[idx]     = shapeHelix[idx] * tighten;
-      position[idx + 1] = shapeHelix[idx + 1];
-      position[idx + 2] = shapeHelix[idx + 2] * tighten;
+      position[idx]     = shapeBrain[idx] * tighten;
+      position[idx + 1] = shapeBrain[idx + 1];
+      position[idx + 2] = shapeBrain[idx + 2] * tighten;
     }
     geometry.attributes.position.needsUpdate = true;
     updateHeroOpacity(progress);

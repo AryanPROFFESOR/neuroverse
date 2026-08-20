@@ -240,6 +240,11 @@
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: var(--space-lg);
 }
+.theory-grid--single {
+  grid-template-columns: minmax(0, 640px);
+  justify-content: center;
+}
+.theory-grid--single .theory-card { padding: var(--space-xl) calc(var(--space-xl) * 1.2); }
 .theory-card {
   background: var(--clr-surface);
   border: 1px solid var(--clr-border);

@@ -158,7 +158,24 @@ body.cursor-active .cursor-ring { width: 60px; height: 60px; border-color: var(-
   display: flex; align-items: center; justify-content: center;
   font-size: 1.1rem; font-weight: 800; color: var(--clr-bg);
 }
-.nav__logo-text em { font-style: italic; color: var(--clr-text-2); }
+.nav__logo-img {
+  width: 36px; height: 36px;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: 50%;
+  object-fit: cover;
+  padding: 3px;
+}
+.nav__logo-text {
+  font-size: 0.98rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.nav__logo-text em {
+  font-style: normal;
+  color: var(--clr-accent);
+  font-weight: 800;
+}
 .nav__links {
   display: flex; align-items: center; gap: var(--space-lg);
 }
