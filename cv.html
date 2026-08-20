@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV & Personal — NeuroVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <style>
+    /* ── CV PAGE ──────────────────────────────────────────── */
+    .cv-hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+    .cv-hero__left {
+      padding: calc(var(--nav-h) + 5rem) var(--space-xl) 5rem;
+      background: var(--clr-bg);
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; z-index: 2;
+    }
+    .cv-hero__right {
+      background: var(--clr-surface);
+      border-left: 1px solid var(--clr-border);
+      display: flex; align-items: center; justify-content: center;
+      padding: calc(var(--nav-h) + 3rem) var(--space-xl) 3rem;
+      position: relative;
+    }
+    .cv-hero__right::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(79,163,227,0.06), transparent 70%);
+    }
+    .cv-name {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 6vw, 6.5rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-sm);
+    }
+    .cv-name em { font-style: italic; color: var(--clr-accent-2); }
+    .cv-title {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.2em;
+      color: var(--clr-accent);
+      text-transform: uppercase;
+      margin-bottom: var(--space-xl);
+    }
+    .cv-bio {
+      font-size: 1.05rem;
+      color: var(--clr-text-2);
+      font-style: italic;
+      line-height: 1.8;
+      max-width: 480px;
+      margin-bottom: var(--space-xl);
+    }
+    .cv-contact { display: flex; flex-direction: column; gap: var(--space-sm); margin-bottom: var(--space-xl); }
+    .cv-contact__item {
+      display: flex; align-items: center; gap: var(--space-md);
+      font-family: var(--font-mono); font-size: 0.78rem; color: var(--clr-text-2);
+    }
+    .cv-contact__icon { color: var(--clr-accent); width: 20px; text-align: center; }
+    .cv-actions { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    /* Profile visual */
+    .cv-profile { text-align: center; position: relative; z-index: 2; }
+    .cv-avatar {
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-2));
+      margin: 0 auto var(--space-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem;
+      box-shadow: 0 0 60px rgba(79,163,227,0.3);
+      animation: glow-pulse 3s ease-in-out infinite;
+      position: relative;
+    }
+    .cv-avatar::after {
+      content: '';
+      position: absolute; inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(79,163,227,0.3);
+      animation: consciousness-wave 4s ease-in-out infinite;
+    }
+    .cv-avatar-ring {
+      position: absolute; inset: -16px;
+      border-radius: 50%;
+      border: 1px solid rgba(79,163,227,0.1);
+    }
+    .cv-stats { display: flex; gap: var(--space-xl); justify-content: center; }
+    .cv-stat { text-align: center; }
+    .cv-stat__num { font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; color: var(--clr-accent); }
+    .cv-stat__label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: .12em; color: var(--clr-text-3); text-transform: uppercase; }
+    /* CV Main */
+    .cv-main {
+      max-width: var(--max-width); margin: 0 auto;
+      padding: var(--space-2xl) var(--space-xl);
+      display: grid; grid-template-columns: 2fr 1fr;
+      gap: var(--space-2xl); align-items: start;
+    }
+    .cv-section-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem; letter-spacing: .25em;
+      color: var(--clr-accent); text-transform: uppercase;
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    /* Sidebar */
+    .cv-sidebar { position: sticky; top: calc(var(--nav-h) + 2rem); }
+    .cv-sidebar-section { margin-bottom: var(--space-xl); }
+    .skill-group { margin-bottom: var(--space-lg); }
+    .skill-group__label {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      letter-spacing: .12em; color: var(--clr-text-3);
+      text-transform: uppercase; margin-bottom: var(--space-sm);
+    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+    /* Publications */
+    .pub-item {
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .pub-item:last-child { border-bottom: none; }
+    .pub-item__title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .pub-item__meta { font-family: var(--font-mono); font-size: 0.68rem; color: var(--clr-text-3); }
+    /* Contact form */
+    .contact-section {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+    }
+    .contact-field { margin-bottom: var(--space-lg); }
+    .contact-label {
+      display: block; font-family: var(--font-mono);
+      font-size: 0.7rem; letter-spacing: .12em;
+      color: var(--clr-text-3); text-transform: uppercase;
+      margin-bottom: var(--space-xs);
+    }
+    .contact-input {
+      width: 100%; padding: 12px 16px;
+      background: var(--clr-bg);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      color: var(--clr-text);
+      font-family: var(--font-mono); font-size: 0.85rem;
+      outline: none;
+      transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+    }
+    .contact-input:focus { border-color: var(--clr-accent); box-shadow: 0 0 0 3px rgba(79,163,227,.1); }
+    .contact-textarea { min-height: 120px; resize: vertical; }
+    @media (max-width: 1024px) {
+      .cv-hero { grid-template-columns: 1fr; }
+      .cv-hero__right { display: none; }
+      .cv-main { grid-template-columns: 1fr; }
+      .cv-sidebar { position: static; }
+    }
+  </style>
+</head>
+<body class="site-body" data-theme="dark">
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav class="nav" id="mainNav">
+    <div class="nav__logo"><span class="nav__logo-mark">N</span><span class="nav__logo-text">euro<em>Verse</em></span></div>
+    <button class="nav__toggle" id="navToggle"><span></span><span></span><span></span></button>
+    <ul class="nav__links" id="navLinks">
+      <li><a href="index.html"        class="nav__link"        data-label="01">Blog</a></li>
+      <li><a href="research.html"     class="nav__link"        data-label="02">Research</a></li>
+      <li><a href="papers.html"       class="nav__link"        data-label="03">Papers</a></li>
+      <li><a href="neuroscience.html" class="nav__link"        data-label="04">Neuro</a></li>
+      <li><a href="cv.html"           class="nav__link active" data-label="05">CV</a></li>
+      <li><a href="philosophy.html"   class="nav__link nav__link--special" data-label="∞">Ψ Mind</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="cv-hero">
+    <div class="cv-hero__left">
+      <p class="hero__eyebrow reveal-up">About & CV</p>
+      <h1 class="cv-name reveal-up">Aryan<br></h1>
+      <p class="cv-title reveal-up">Electronics Engineering · Stem Cell & Molecular Biology · Neuroscience</p>
+      <p class="cv-bio reveal-up">
+        Interdisciplinary researcher and Electronics & Communication Engineering student exploring how the brain develops and functions — from stem cell biology and gene splicing to electrophysiology — alongside a technical foundation in SoC/FPGA design, embedded systems, and hardware-software co-design.
+      </p>
+      <div class="cv-contact reveal-up">
+        <div class="cv-contact__item"><span class="cv-contact__icon">✉</span> aryan.316412823@ipu.ac.in</div>
+        <div class="cv-contact__item"><span class="cv-contact__icon">☎</span> +91-9958329399</div>
+        <div class="cv-contact__item"><span class="cv-contact__icon">📍</span> Delhi NCR, India</div>
+        <div class="cv-contact__item"><span class="cv-contact__icon">⌥</span> <a href="https://github.com/AryanPROFFESOR" target="_blank" rel="noopener" style="color:inherit">github.com/AryanPROFFESOR</a></div>
+        <div class="cv-contact__item"><span class="cv-contact__icon">in</span> <a href="https://linkedin.com/in/aryan-09176b1b6" target="_blank" rel="noopener" style="color:inherit">linkedin.com/in/aryan-09176b1b6</a></div>
+      </div>
+      <div class="cv-actions reveal-up">
+        <a href="Aryan_CV.pdf" target="_blank" class="btn btn--primary">Download CV PDF</a>
+        <a href="#contact" class="btn btn--ghost">Contact Me</a>
+      </div>
+    </div>
+    <div class="cv-hero__right">
+      <div class="cv-profile">
+        <div class="cv-avatar">
+          🧠
+          <div class="cv-avatar-ring"></div>
+        </div>
+        <div class="cv-stats">
+          <div class="cv-stat"><div class="cv-stat__num">4</div><div class="cv-stat__label">Research Roles</div></div>
+          <div class="cv-stat"><div class="cv-stat__num">1</div><div class="cv-stat__label">Publication</div></div>
+          <div class="cv-stat"><div class="cv-stat__num">2+</div><div class="cv-stat__label">Years Research</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CV MAIN -->
+  <div class="cv-main">
+    <!-- LEFT: Timeline + Publications -->
+    <div>
+      <!-- Education & Experience -->
+      <p class="cv-section-title">Education & Experience</p>
+      <div class="timeline" id="cvTimeline"></div>
+
+      <!-- Publications -->
+      <p class="cv-section-title" style="margin-top:4rem">Publications</p>
+      <div id="pubList">
+        <div class="pub-item">
+          <div class="pub-item__title">A computational experiment for classification of mesocortical dopaminergic pathways based on human addiction patterns</div>
+          <div class="pub-item__meta">ICAAI 2025</div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <p class="cv-section-title" style="margin-top:4rem" id="contact">Get In Touch</p>
+      <div class="contact-section">
+        <p style="font-size:.95rem;color:var(--clr-text-2);font-style:italic;margin-bottom:var(--space-xl)">
+          Open to research collaborations, writing commissions, and speaking engagements.
+        </p>
+        <div class="contact-field">
+          <label class="contact-label">Your Name</label>
+          <input type="text" class="contact-input" placeholder="Ada Lovelace" />
+        </div>
+        <div class="contact-field">
+          <label class="contact-label">Email</label>
+          <input type="email" class="contact-input" placeholder="ada@computing.io" />
+        </div>
+        <div class="contact-field">
+          <label class="contact-label">Subject</label>
+          <input type="text" class="contact-input" placeholder="Research collaboration" />
+        </div>
+        <div class="contact-field">
+          <label class="contact-label">Message</label>
+          <textarea class="contact-input contact-textarea" placeholder="Tell me about your project…"></textarea>
+        </div>
+        <button class="btn btn--primary" style="width:100%">Send Message</button>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="cv-sidebar">
+      <div class="cv-sidebar-section">
+        <p class="cv-section-title">Technical Skills</p>
+        <div class="skill-group">
+          <div class="skill-group__label">Programming & Hardware</div>
+          <div class="skill-tags">
+            <span class="tag tag--neuro">C / C++</span>
+            <span class="tag tag--neuro">Python</span>
+            <span class="tag tag--neuro">R</span>
+            <span class="tag tag--neuro">MATLAB / Simulink</span>
+            <span class="tag tag--neuro">VHDL / Verilog</span>
+            <span class="tag tag--neuro">SystemVerilog</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group__label">Tools & Systems</div>
+          <div class="skill-tags">
+            <span class="tag tag--bio">AMD Vivado / Vitis</span>
+            <span class="tag tag--bio">KiCad</span>
+            <span class="tag tag--bio">Cadence</span>
+            <span class="tag tag--bio">FreeRTOS</span>
+            <span class="tag tag--bio">ROS2</span>
+            <span class="tag tag--bio">Git</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group__label">Neuroscience & Wet-Lab</div>
+          <div class="skill-tags">
+            <span class="tag tag--cv">Patch-clamp</span>
+            <span class="tag tag--cv">Stereotaxic surgery</span>
+            <span class="tag tag--cv">PCR / RNA extraction</span>
+            <span class="tag tag--cv">Gene cloning</span>
+            <span class="tag tag--cv">Western blot</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group__label">AI, Data & Bioinformatics</div>
+          <div class="skill-tags">
+            <span class="tag tag--theory">PyTorch</span>
+            <span class="tag tag--theory">OpenCV</span>
+            <span class="tag tag--theory">NGS pipelines</span>
+            <span class="tag tag--theory">scRNA-seq</span>
+            <span class="tag tag--theory">PyMOL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proficiency bars -->
+      <div class="cv-sidebar-section">
+        <p class="cv-section-title">Proficiency</p>
+        <div class="skill-bar"><div class="skill-bar__header"><span>FPGA / SoC & Embedded Systems</span><span class="skill-bar__pct">90%</span></div><div class="progress"><div class="progress__fill" style="width:90%"></div></div></div>
+        <div class="skill-bar" style="margin-top:var(--space-md)"><div class="skill-bar__header"><span>Electrophysiology & Signal Analysis</span><span class="skill-bar__pct">85%</span></div><div class="progress"><div class="progress__fill" style="width:85%"></div></div></div>
+        <div class="skill-bar" style="margin-top:var(--space-md)"><div class="skill-bar__header"><span>Molecular Biology & Genomics</span><span class="skill-bar__pct">82%</span></div><div class="progress"><div class="progress__fill" style="width:82%"></div></div></div>
+        <div class="skill-bar" style="margin-top:var(--space-md)"><div class="skill-bar__header"><span>Research & Scientific Writing</span><span class="skill-bar__pct">90%</span></div><div class="progress"><div class="progress__fill" style="width:90%"></div></div></div>
+      </div>
+
+      <!-- Awards -->
+      <div class="cv-sidebar-section">
+        <p class="cv-section-title">Awards & Grants</p>
+        <div style="display:flex;flex-direction:column;gap:var(--space-md)">
+          <div style="padding:var(--space-md);background:var(--clr-surface);border:1px solid var(--clr-border);border-radius:var(--radius-md)">
+            <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--clr-accent);letter-spacing:.1em;margin-bottom:4px">2025</div>
+            <div style="font-family:var(--font-display);font-size:1rem;font-weight:700">SRFP-2025 Fellowship</div>
+            <div style="font-size:.82rem;color:var(--clr-text-3);font-style:italic">JNCASR — A highly selective national fellowship recognizing exceptional undergraduate research potential.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="footer">
+    <div class="footer__bottom" style="border-top:1px solid var(--clr-border);padding:var(--space-lg) var(--space-xl)">
+      <p>© 2026 NeuroVerse</p>
+    </div>
+  </footer>
+
+  <script src="js/shared.js" type="module"></script>
+  <script type="module">
+    const TIMELINE_DATA = [
+      { date:'05/2026 – Present', title:'Intern, SCCS (Satellite & Cellular Communication Systems)', org:'Bharat Electronics Limited (BEL), Ghaziabad', desc:'Developing custom VHDL logic on the Zynq-7020 (ZedBoard), integrating Programmable Logic with bare-metal C via AMBA AXI, and building a real-time audio spectrogram pipeline over I2S/UART. Assisting with integration and tuning of defense-grade Satcom-On-The-Move (SOTM) terminals.' },
+      { date:'06/2025 – 09/2025', title:'Research Fellow (SRFP)', org:'Molecular Biology & Genetics Unit, JNCASR', desc:'Investigated minigene splicing assays for Orofacial Digital Syndrome and its possible link to epilepsy — cloning genes into plasmids, preparing RNA samples, and running computational docking and RNA-seq differential expression analysis.' },
+      { date:'01/2025 – 02/2025', title:'Research Intern', org:'Department of Biophysics, AIIMS Delhi', desc:'Processed epileptogenic brain tissue from surgical resection and assisted in analyzing GABAergic and glutamatergic synaptic activity using patch-clamp electrophysiology.' },
+      { date:'06/2024 – 08/2024', title:'Research Intern', org:'AINN — Computation & Neurosurgery, Noida', desc:'Analyzed rat EEG signals with MATLAB to evaluate GABAergic modulators across sleep and wakefulness stages, alongside stereotaxic surgery and data acquisition.' },
+      { date:'08/2023 – 05/2027 (Expected)', title:'B.Tech in Electronics & Communication Engineering', org:'USICT, GGSIPU, Delhi', desc:'GPA: 3.6/4.00. Coursework includes Signals & Systems, Digital & Analog Electronics, PCB Design, Verilog, VHDL, and Embedded Systems.' },
+    ];
+
+    const timeline = document.getElementById('cvTimeline');
+    if (timeline) {
+      timeline.innerHTML = TIMELINE_DATA.map(item => `
+        <div class="timeline__item" data-reveal>
+          <div class="timeline__date">${item.date}</div>
+          <div class="timeline__title">${item.title}</div>
+          <div class="timeline__org">${item.org}</div>
+          <div class="timeline__desc">${item.desc}</div>
+        </div>
+      `).join('');
+    }
+    window.observeReveals?.(timeline);
+  </script>
+</body>
+</html>

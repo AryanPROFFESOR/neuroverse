@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research — NeuroVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/research.css" />
+</head>
+<body class="site-body" data-theme="dark">
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav class="nav scrolled" id="mainNav">
+    <div class="nav__logo">
+      <span class="nav__logo-mark">N</span>
+      <span class="nav__logo-text">euro<em>Verse</em></span>
+    </div>
+    <button class="nav__toggle" id="navToggle"><span></span><span></span><span></span></button>
+    <ul class="nav__links" id="navLinks">
+      <li><a href="index.html"        class="nav__link"         data-label="01">Blog</a></li>
+      <li><a href="research.html"     class="nav__link active"  data-label="02">Research</a></li>
+      <li><a href="papers.html"       class="nav__link"         data-label="03">Papers</a></li>
+      <li><a href="neuroscience.html" class="nav__link"         data-label="04">Neuro</a></li>
+      <li><a href="cv.html"           class="nav__link"         data-label="05">CV</a></li>
+      <li><a href="philosophy.html"   class="nav__link nav__link--special" data-label="∞">Ψ Mind</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <canvas class="page-hero__canvas" id="researchCanvas"></canvas>
+  </section>
+
+  <section class="page-intro section">
+    <div class="page-intro__content">
+      <p class="hero__eyebrow reveal-up">Research Hub</p>
+      <h1 class="page-hero__title reveal-up">
+        Theoretical <em>Insights</em><br>& Deep Research
+      </h1>
+      <p class="hero__sub reveal-up">
+        Original research, theoretical frameworks, and deep-dive analyses across neuroscience, stem cell & molecular biology, and the electronics used to study them. Every claim backed, every model questioned.
+      </p>
+    </div>
+  </section>
+
+  <!-- RESEARCH DOMAINS -->
+  <section class="section research-domains">
+    <div class="section__header" data-reveal>
+      <p class="section__label">Research Areas</p>
+      <h2 class="section__title">Three <em>Domains</em></h2>
+      <div class="section__line"></div>
+    </div>
+    <div class="domain-grid">
+      <div class="domain-card domain-card--neuro" data-reveal data-delay="1">
+        <div class="domain-card__icon">🧠</div>
+        <h3 class="domain-card__title">Neuroscience</h3>
+        <p class="domain-card__desc">Electrophysiology and circuit-level function — from synaptic signaling to the network dynamics that emerge from epileptogenic and healthy tissue alike.</p>
+        <ul class="domain-card__topics">
+          <li>Patch-clamp electrophysiology</li>
+          <li>GABAergic & glutamatergic signaling</li>
+          <li>EEG time- & frequency-domain analysis</li>
+          <li>Sleep & wakefulness circuits</li>
+          <li>Predictive processing</li>
+          <li>Epilepsy & synaptic dysfunction</li>
+        </ul>
+      </div>
+      <div class="domain-card domain-card--bio" data-reveal data-delay="2">
+        <div class="domain-card__icon">🧬</div>
+        <h3 class="domain-card__title">Stem Cell & Molecular Biology</h3>
+        <p class="domain-card__desc">The molecular machinery of development — gene splicing, cell fate, and tissue-level function, studied through cloning, RNA analysis, and computational genomics.</p>
+        <ul class="domain-card__topics">
+          <li>Minigene splicing assays</li>
+          <li>Stem cell & tissue culture</li>
+          <li>Gene cloning & expression analysis</li>
+          <li>RNA-seq & differential expression</li>
+          <li>Structural docking</li>
+          <li>Genomic data optimization</li>
+        </ul>
+      </div>
+      <div class="domain-card domain-card--cv" data-reveal data-delay="3">
+        <div class="domain-card__icon">⚙</div>
+        <h3 class="domain-card__title">Electronics & Embedded Systems</h3>
+        <p class="domain-card__desc">Hardware for signal acquisition and control — SoC/FPGA design and embedded systems built to capture and process biological signal in real time.</p>
+        <ul class="domain-card__topics">
+          <li>FPGA architecture & custom IP</li>
+          <li>VHDL / Verilog & RTL verification</li>
+          <li>AMBA AXI & hardware-software co-design</li>
+          <li>Real-time signal acquisition</li>
+          <li>PCB design & embedded control</li>
+          <li>Robotics & autonomous systems</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED THEORETICAL INSIGHTS -->
+  <section class="section theory-section">
+    <div class="section__header" data-reveal>
+      <p class="section__label">Theoretical Insights</p>
+      <h2 class="section__title">Original <em>Frameworks</em></h2>
+      <div class="section__line"></div>
+    </div>
+    <div class="theory-grid" id="theoryGrid">
+      <!-- Injected by JS -->
+    </div>
+  </section>
+
+  <section class="neural-diagram-section">
+    <div class="neural-diagram-section__inner">
+      <div class="neural-diagram-section__text" data-reveal="left">
+        <p class="section__label">Interactive Model</p>
+        <h2 class="section__title">The <em>Predictive Brain</em></h2>
+        <p style="color:var(--clr-text-2);font-style:italic;line-height:1.8;margin:1rem 0 2rem">
+          Karl Friston's Free Energy Principle proposes that the brain is fundamentally a prediction machine. Every perception is a top-down prediction; every sensation is an error signal used to refine those predictions.
+        </p>
+        <div class="callout callout--insight">
+          <div class="callout__icon">💡</div>
+          <div class="callout__body">
+            <div class="callout__title">Key Insight</div>
+            <div class="callout__text">The brain never directly perceives reality. It perceives its own predictions, corrected by sensory error signals. Hallucinations are predictions without correction.</div>
+          </div>
+        </div>
+        <div class="insight-tags" style="margin-top:2rem;display:flex;gap:.75rem;flex-wrap:wrap">
+          <span class="tag tag--neuro">Predictive Coding</span>
+          <span class="tag tag--theory">Free Energy</span>
+          <span class="tag tag--bio">Bayes Theorem</span>
+        </div>
+      </div>
+      <div class="neural-diagram-section__canvas" data-reveal="right">
+        <canvas id="predictiveCanvas"></canvas>
+        <div class="diagram-legend">
+          <div class="legend-item"><span style="background:#f2f2f2"></span>Top-down Predictions</div>
+          <div class="legend-item"><span style="background:#bfbfbf"></span>Bottom-up Error Signals</div>
+          <div class="legend-item"><span style="background:#8c8c8c"></span>Precision Weighting</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gene Explorer & Sequence Prediction Engine now live on the Neuroscience page -->
+  <section class="section" style="padding-top:0">
+    <div class="callout callout--insight" data-reveal>
+      <div class="callout__icon">🧬</div>
+      <div class="callout__body">
+        <div class="callout__title">Looking for the Gene Explorer or Sequence Engine?</div>
+        <div class="callout__text">The UniProt Gene Explorer and Sequence Prediction Engine now live on the Neuroscience page, alongside the NeuroSim Suite.</div>
+      </div>
+      <a class="hero__button" href="neuroscience.html" style="margin-left:auto">Go to Neuroscience</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <span class="nav__logo-mark">N</span>
+        <span class="nav__logo-text">euro<em>Verse</em></span>
+        <p>Bridging neuroscience, biology, and philosophy through rigorous research.</p>
+      </div>
+      <div class="footer__links">
+        <div class="footer__col">
+          <h4>Research</h4>
+          <a href="research.html">Neuroscience</a>
+          <a href="research.html">Stem Cell & Molecular Biology</a>
+          <a href="research.html">Electronics & Embedded Systems</a>
+        </div>
+        <div class="footer__col">
+          <h4>Content</h4>
+          <a href="papers.html">Paper Explanations</a>
+          <a href="index.html">Blog</a>
+        </div>
+        <div class="footer__col">
+          <h4>Personal</h4>
+          <a href="cv.html">CV</a>
+          <a href="philosophy.html">Ψ Mind</a>
+          <a href="cv.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>© 2026 NeuroVerse. Built with curiosity and caffeine.</p>
+      <div class="footer__socials">
+        <a href="https://github.com/AryanPROFFESOR" target="_blank" rel="noopener" aria-label="GitHub">⌥</a>
+        <a href="https://linkedin.com/in/aryan-09176b1b6" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/PDBLoader.js"></script>
+  <script src="js/shared.js" type="module"></script>
+  <script src="js/research.js" type="module"></script>
+</body>
+</html>

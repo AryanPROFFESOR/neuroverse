@@ -1,0 +1,104 @@
+# ============================================================
+#  NEUROVERSE — .github/workflows/deploy.yml
+#  Auto-deploys to GitHub Pages on every push to main
+#  Also runs a link-check and HTML validation
+# ============================================================
+
+name: Deploy NeuroVerse
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages:    write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  # ── VALIDATE ───────────────────────────────────────────────
+  validate:
+    name: Validate HTML & Assets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check all HTML files exist
+        run: |
+          for f in index.html research.html papers.html \
+                   neuroscience.html cv.html philosophy.html; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing: $f"
+              exit 1
+            fi
+            echo "✅ $f"
+          done
+
+      - name: Check CSS files
+        run: |
+          for f in css/main.css css/animations.css css/components.css \
+                   css/research.css css/philosophy.css; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing: $f"
+              exit 1
+            fi
+            echo "✅ $f"
+          done
+
+      - name: Check JS files
+        run: |
+          for f in js/main.js js/shared.js js/philosophy.js js/research.js; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing: $f"
+              exit 1
+            fi
+            echo "✅ $f"
+          done
+
+      - name: Report asset sizes
+        run: |
+          echo "=== Asset Sizes ==="
+          du -sh css/ js/ *.html
+          echo "Total:"
+          du -sh .
+
+  # ── DEPLOY ─────────────────────────────────────────────────
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Create .nojekyll
+        run: touch .nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Print live URL
+        run: |
+          echo "🧠 NeuroVerse is live at: ${{ steps.deployment.outputs.page_url }}"

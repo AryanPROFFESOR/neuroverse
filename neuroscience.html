@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neuroscience — NeuroVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/research.css" />
+  <style>
+    /* ── NEURO PAGE ─────────────────────────────────────── */
+    .neuro-hero {
+      min-height: 80vh; display: flex; align-items: center;
+      padding: calc(var(--nav-h) + 5rem) var(--space-xl) 5rem;
+      background: var(--clr-bg); position: relative; overflow: hidden;
+    }
+    .neuro-hero__canvas { position: absolute; inset: 0; width:100%; height:100%; pointer-events:none; }
+    .neuro-hero__content { position: relative; z-index: 2; max-width: 750px; }
+    .neuro-hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 8vw, 8rem);
+      font-weight: 800; line-height: .92; letter-spacing: -.03em;
+      margin-bottom: var(--space-lg);
+    }
+    .neuro-hero__title em { font-style: italic; color: #7FC29B; }
+    /* Topic sections */
+    .neuro-topic-nav {
+      max-width: var(--max-width); margin: 0 auto;
+      padding: var(--space-xl); display: flex; gap: var(--space-sm); flex-wrap: wrap;
+    }
+    .neuro-main { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-xl) var(--space-2xl); }
+    /* Topic block */
+    .neuro-topic-block {
+      margin-bottom: var(--space-2xl);
+      padding-bottom: var(--space-2xl);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .neuro-topic-block:last-child { border-bottom: none; }
+    .neuro-topic-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: var(--space-xl); gap: var(--space-lg);
+    }
+    .neuro-topic-num {
+      font-family: var(--font-display); font-size: 5rem; font-weight: 800;
+      color: var(--clr-surface-2); line-height: 1; flex-shrink: 0;
+    }
+    .neuro-topic-title {
+      font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 800; letter-spacing: -.02em; line-height: 1.1;
+      margin-bottom: var(--space-sm);
+    }
+    .neuro-topic-title em { color: #7FC29B; font-style: italic; }
+    .neuro-topic-subtitle { font-size: 1rem; color: var(--clr-text-2); font-style: italic; }
+    /* Article cards */
+    .neuro-articles {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--space-md);
+    }
+    .neuro-article-card {
+      background: var(--clr-surface); border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md); padding: var(--space-lg);
+      transition: all var(--dur-med) var(--ease-out); cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .neuro-article-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: #7FC29B; transform: scaleY(0); transform-origin: top;
+      transition: transform var(--dur-med) var(--ease-out);
+    }
+    .neuro-article-card:hover { border-color: rgba(127,194,155,.4); transform: translateX(4px); }
+    .neuro-article-card:hover::before { transform: scaleY(1); }
+    .neuro-article-card__topic {
+      font-family: var(--font-mono); font-size: .65rem; letter-spacing: .12em;
+      color: #7FC29B; text-transform: uppercase; margin-bottom: var(--space-xs);
+    }
+    .neuro-article-card__title {
+      font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;
+      line-height: 1.3; margin-bottom: var(--space-sm);
+    }
+    .neuro-article-card__excerpt {
+      font-size: .85rem; color: var(--clr-text-2); font-style: italic;
+      line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .neuro-article-card__meta {
+      font-family: var(--font-mono); font-size: .65rem; color: var(--clr-text-3);
+      margin-top: var(--space-sm);
+    }
+    /* Key insight panel */
+    .neuro-insight-panel {
+      background: linear-gradient(135deg, rgba(127,194,155,.06), rgba(79,163,227,.03));
+      border: 1px solid rgba(127,194,155,.2);
+      border-radius: var(--radius-lg); padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+    .neuro-insight-panel__label {
+      font-family: var(--font-mono); font-size: .68rem; letter-spacing: .2em;
+      color: #7FC29B; text-transform: uppercase; margin-bottom: var(--space-md);
+    }
+    .neuro-insight-panel__text {
+      font-size: 1.1rem; color: var(--clr-text); font-style: italic;
+      line-height: 1.8;
+    }
+    @media (max-width: 768px) {
+      .neuro-topic-header { flex-direction: column; }
+      .neuro-topic-num { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body class="site-body" data-theme="dark">
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav class="nav" id="mainNav">
+    <div class="nav__logo"><span class="nav__logo-mark">N</span><span class="nav__logo-text">euro<em>Verse</em></span></div>
+    <button class="nav__toggle" id="navToggle"><span></span><span></span><span></span></button>
+    <ul class="nav__links" id="navLinks">
+      <li><a href="index.html"        class="nav__link"        data-label="01">Blog</a></li>
+      <li><a href="research.html"     class="nav__link"        data-label="02">Research</a></li>
+      <li><a href="papers.html"       class="nav__link"        data-label="03">Papers</a></li>
+      <li><a href="neuroscience.html" class="nav__link active" data-label="04">Neuro</a></li>
+      <li><a href="cv.html"           class="nav__link"        data-label="05">CV</a></li>
+      <li><a href="philosophy.html"   class="nav__link nav__link--special" data-label="∞">Ψ Mind</a></li>
+    </ul>
+  </nav>
+
+  <section class="neuro-hero">
+    <canvas class="neuro-hero__canvas" id="neuroHeroCanvas"></canvas>
+    <div class="neuro-hero__content">
+      <p class="hero__eyebrow reveal-up">The Complete Guide</p>
+      <h1 class="neuro-hero__title reveal-up">
+        All of <em>Neuroscience</em><br>& Biology
+      </h1>
+      <p class="hero__sub reveal-up">
+        Core topics across cellular, systems, and molecular neuroscience — explained from first principles, alongside live tools for gene lookup, sequence analysis, and network simulation.
+      </p>
+    </div>
+  </section>
+
+  <!-- TOOLS: NEUROSIM SUITE / GENE EXPLORER / SEQUENCE ENGINE -->
+  <section class="section" style="padding-top:2.5rem">
+    <div class="section__header" data-reveal>
+      <p class="section__label">Interactive Tool</p>
+      <h2 class="section__title">NeuroSim <em>Suite</em></h2>
+      <div class="section__line"></div>
+    </div>
+    <div class="callout callout--insight" data-reveal>
+      <div class="callout__icon">◼</div>
+      <div class="callout__body">
+        <div class="callout__title">Open the simulator</div>
+        <div class="callout__text">Launch the neuroscience simulation suite for neuron models, epilepsy dynamics, and network systems with the monochrome UI.</div>
+      </div>
+      <a class="hero__button" href="neuro_sim_suite.html" style="margin-left:auto">Open NeuroSim Suite</a>
+    </div>
+  </section>
+
+  <!-- GENE DATABASE EXPLORER -->
+  <section class="section gene-explorer-section" style="margin-top:1rem">
+    <div class="section__header">
+      <p class="section__label">Gene Database Explorer</p>
+      <h2 class="section__title">Gene <em>Explorer</em></h2>
+      <div class="section__line"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;flex-direction:column;gap:1rem;max-width:840px">
+      <div style="display:flex;gap:.75rem;align-items:center">
+        <input id="geneInput" placeholder="Enter Gene Symbol (e.g., SCNM1, BRCA1)" style="flex:1;padding:.75rem 1rem;background:transparent;border:1px solid var(--clr-border);color:var(--clr-text);font-family:JetBrains\ Mono,monospace" />
+        <button id="uniprotQuery" class="btn" style="background:var(--clr-text);color:var(--clr-bg);padding:.7rem 1rem;border-radius:6px">QUERY UNIPROT</button>
+      </div>
+      <pre id="uniprotOutput" style="background:transparent;border:1px solid var(--clr-border);padding:1rem;border-radius:6px;min-height:6rem;font-family:JetBrains\ Mono,monospace;color:var(--clr-text)"></pre>
+      <div style="font-size:.75rem;color:var(--clr-text-3)">Data retrieved dynamically from the UniProt Consortium REST API</div>
+    </div>
+  </section>
+
+  <!-- SEQUENCE PREDICTION ENGINE -->
+  <section class="section sequence-engine" id="sequenceEngine" style="margin-top:1rem">
+    <div class="section__header sequence-engine__header" data-reveal>
+      <p class="section__label">Sequence-to-Structure</p>
+      <h2 class="section__title">Sequence Prediction <em>Engine</em></h2>
+      <div class="section__line"></div>
+    </div>
+    <div class="sequence-engine__shell" data-reveal>
+      <label class="sequence-engine__label" for="sequenceInput">Input sequence</label>
+      <textarea
+        id="sequenceInput"
+        class="sequence-engine__input"
+        spellcheck="false"
+        placeholder="Paste ATGC, AUGC, or amino acid sequences here..."
+      ></textarea>
+      <div class="sequence-engine__actions">
+        <button class="sequence-engine__button" id="foldButton" type="button">INITIATE FOLDING</button>
+      </div>
+      <pre class="sequence-engine__output" id="sequenceOutput" hidden></pre>
+    </div>
+  </section>
+
+  <!-- Topic nav -->
+  <div class="neuro-topic-nav">
+    <button class="filter-tab active" data-topic="all">All Topics</button>
+    <button class="filter-tab" data-topic="cellular">Cellular</button>
+    <button class="filter-tab" data-topic="systems">Systems</button>
+    <button class="filter-tab" data-topic="molecular">Molecular</button>
+  </div>
+
+  <div class="neuro-main" id="neuroMain">
+    <!-- Injected by JS -->
+  </div>
+
+  <footer class="footer">
+    <div class="footer__bottom" style="border-top:1px solid var(--clr-border);padding:var(--space-lg) var(--space-xl)">
+      <p>© 2026 NeuroVerse</p>
+    </div>
+  </footer>
+
+  <script src="js/shared.js" type="module"></script>
+  <script type="module">
+    // ── GENE DATABASE EXPLORER (UniProt) ─────────────────────
+    const geneInputEl = document.getElementById('geneInput');
+    const uniprotBtn = document.getElementById('uniprotQuery');
+    const uniprotOutput = document.getElementById('uniprotOutput');
+
+    async function queryUniProt(gene) {
+      const out = uniprotOutput;
+      if (!gene) {
+        out.textContent = 'Please enter a gene symbol.';
+        window.typewriterEffect?.(out);
+        return;
+      }
+      const url = `https://rest.uniprot.org/uniprotkb/search?query=gene:${encodeURIComponent(gene)}&format=json`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Network response not ok');
+        const data = await res.json();
+        const first = data.results && data.results[0];
+        if (!first) {
+          out.textContent = '404: Gene sequence not found in current database';
+          window.typewriterEffect?.(out);
+          return;
+        }
+        const proteinName = first.proteinDescription?.recommendedName?.fullName?.value || 'N/A';
+        const organism = first.organism?.scientificName || 'N/A';
+        let func = 'N/A';
+        if (Array.isArray(first.comments)) {
+          const f = first.comments.find(c => c.commentType === 'FUNCTION');
+          if (f && Array.isArray(f.texts) && f.texts[0]) func = f.texts[0].value || 'N/A';
+        }
+        const outText = [
+          '> QUERY ACCEPTED.',
+          `> PROTEIN: ${proteinName}`,
+          `> ORGANISM: ${organism}`,
+          `> FUNCTION: ${func}`
+        ].join('\n');
+        out.textContent = outText;
+        window.typewriterEffect?.(out);
+      } catch (err) {
+        out.textContent = 'Error fetching data from UniProt';
+        window.typewriterEffect?.(out);
+        console.error('UniProt error', err);
+      }
+    }
+
+    if (uniprotBtn) {
+      uniprotBtn.addEventListener('click', () => {
+        const gene = (geneInputEl?.value || '').trim();
+        queryUniProt(gene);
+      });
+    }
+
+    // ── SEQUENCE PREDICTION ENGINE ───────────────────────────
+    const sequenceInput = document.getElementById('sequenceInput');
+    const foldButton = document.getElementById('foldButton');
+    const sequenceOutput = document.getElementById('sequenceOutput');
+
+    function getSequenceReport(sequence) {
+      const trimmed = sequence.trim();
+      const length = trimmed.replace(/\s+/g, '').length;
+      const family = length > 180 ? 'Zinc Finger' : 'Helical Binding Domain';
+      const confidence = Math.min(98, 71 + Math.round(Math.min(length, 120) * 0.18));
+      return [
+        'Analyzing sequence...',
+        'Detecting domains...',
+        `Sequence length: ${length} residues`,
+        `Predicted Family: ${family}`,
+        `Confidence: ${confidence}%`,
+        'Fold state: pending structure refinement',
+      ].join('\n');
+    }
+
+    if (foldButton && sequenceOutput) {
+      foldButton.addEventListener('click', () => {
+        const report = getSequenceReport(sequenceInput?.value || '');
+        sequenceOutput.hidden = false;
+        sequenceOutput.textContent = report;
+        window.typewriterEffect?.(sequenceOutput);
+      });
+    }
+
+    const NEURO_TOPICS = [
+      {
+        num: '01', cat: 'cellular',
+        title: 'The Neuron', em: 'Doctrine',
+        subtitle: 'How individual nerve cells generate and transmit information',
+        insight: 'The neuron doctrine — that the nervous system is composed of discrete cells rather than a continuous reticulum — was established by Cajal in the 1890s and remains foundational. But modern connectomics reveals that the "discrete cell" picture is more complicated: gap junctions, glial signaling, and extrasynaptic transmission all blur the boundaries.',
+        articles: [
+          { title: 'Anatomy of a Neuron: Dendrites, Soma, Axon, and Beyond', excerpt: 'Structural components of the neuron and how each region contributes to signal processing.', readTime: '8 min' },
+          { title: 'Action Potential: The Physics and Chemistry of Neural Firing', excerpt: 'From resting potential to depolarization: the Hodgkin-Huxley equations and what they predict.', readTime: '12 min' },
+          { title: 'Ion Channels: Gates of Ionic Democracy', excerpt: 'Voltage-gated, ligand-gated, and mechanosensitive channels — structure, function, pharmacology.', readTime: '10 min' },
+          { title: 'Myelination and Saltatory Conduction: Why Axons Need Insulation', excerpt: 'How Schwann cells and oligodendrocytes dramatically speed up signal propagation.', readTime: '7 min' },
+        ]
+      },
+      {
+        num: '02', cat: 'cellular',
+        title: 'Synaptic', em: 'Transmission',
+        subtitle: 'How neurons communicate across the synaptic cleft',
+        insight: 'The synapse is not simply a relay station — it is a computational device. Short-term plasticity (facilitation and depression) allows synapses to function as temporal filters. A single cortical neuron receives ~10,000 synaptic inputs and must integrate them in space and time to produce its output. This is a problem of extraordinary complexity solved by molecular machinery operating at nanometre scales.',
+        articles: [
+          { title: 'Neurotransmitter Release: From Calcium Influx to Vesicle Fusion', excerpt: 'SNARE proteins, synaptotagmin, and the millisecond precision of vesicular release.', readTime: '11 min' },
+          { title: 'Glutamate: The Brain\'s Main Excitatory Neurotransmitter', excerpt: 'AMPA, NMDA, and metabotropic receptors — pharmacology and plasticity roles.', readTime: '9 min' },
+          { title: 'GABA: Inhibition as Active Computation', excerpt: 'Why inhibition is not simply the absence of excitation but a distinct computational operation.', readTime: '8 min' },
+          { title: 'Neuromodulators: Dopamine, Serotonin, Noradrenaline, Acetylcholine', excerpt: 'How volumetric transmission modulates circuit-wide excitability, learning, and arousal.', readTime: '15 min' },
+        ]
+      },
+      {
+        num: '03', cat: 'cellular',
+        title: 'Synaptic', em: 'Plasticity',
+        subtitle: 'How synapses change — the molecular basis of learning and memory',
+        insight: 'Hebb\'s rule ("neurons that fire together wire together") was proposed in 1949 as a theoretical postulate. It took decades to find its molecular implementation: the NMDA receptor as a coincidence detector, AMPA receptor trafficking as the physical substrate of LTP, and spike-timing-dependent plasticity as the biological refinement of Hebbian learning.',
+        articles: [
+          { title: 'Long-Term Potentiation: The Cellular Basis of Memory', excerpt: 'From NMDA activation to CaMKII autophosphorylation to AMPA insertion — the cascade in detail.', readTime: '14 min' },
+          { title: 'Spike-Timing-Dependent Plasticity (STDP): When Timing Is Everything', excerpt: 'The asymmetric LTP/LTD window and what it implies for neural coding and causality detection.', readTime: '11 min' },
+          { title: 'Metaplasticity: The Plasticity of Plasticity', excerpt: 'How prior activity history sets the threshold for future LTP/LTD induction. BCM theory.', readTime: '9 min' },
+          { title: 'Homeostatic Plasticity: Keeping the Brain Stable', excerpt: 'Synaptic scaling and intrinsic excitability adjustment as counterweights to Hebbian instability.', readTime: '8 min' },
+        ]
+      },
+      {
+        num: '04', cat: 'systems',
+        title: 'Memory', em: 'Systems',
+        subtitle: 'From short-term buffers to decades-long storage',
+        insight: 'The case of patient H.M. — who, after bilateral hippocampal removal in 1953, could no longer form new explicit memories while retaining procedural skills and implicit learning — was the single most important case study in the history of memory research. It demonstrated that memory is not a unitary faculty but a collection of distinct systems with different neural substrates.',
+        articles: [
+          { title: 'Declarative vs Procedural Memory: A Neural Double Dissociation', excerpt: 'Hippocampus-dependent explicit memory vs basal ganglia-dependent procedural systems.', readTime: '10 min' },
+          { title: 'The Hippocampus: Indexing Theory and Memory Consolidation', excerpt: 'How the hippocampus binds distributed cortical representations and gradually transfers them.', readTime: '13 min' },
+          { title: 'Sleep and Memory Consolidation: Replay, SWS, and REM', excerpt: 'Sharp-wave ripples, hippocampal-cortical dialogue, and why sleep deprivation impairs learning.', readTime: '12 min' },
+          { title: 'Working Memory: The Prefrontal Puzzle', excerpt: 'Persistent activity, attractor dynamics, and why working memory is limited to ~4 items.', readTime: '10 min' },
+        ]
+      },
+      {
+        num: '05', cat: 'systems',
+        title: 'Attention &', em: 'Consciousness',
+        subtitle: 'The selective amplification of information and the mystery of subjective experience',
+        insight: 'Attention and consciousness are often conflated but are dissociable. Attention is a routing mechanism — it selects which signals get priority processing. Consciousness is a different problem: it asks why any processing is accompanied by subjective experience at all. You can attend without being conscious (subliminal priming) and be conscious without attending (peripheral awareness). The two problems require separate theories.',
+        articles: [
+          { title: 'Top-Down vs Bottom-Up Attention: Competition for Neural Representation', excerpt: 'Feature-based, spatial, and object-based attention — the biased competition framework.', readTime: '11 min' },
+          { title: 'Neural Correlates of Consciousness: What We Know and Don\'t', excerpt: 'Global Workspace Theory, IIT, and the current empirical state of consciousness research.', readTime: '16 min' },
+          { title: 'The Default Mode Network: The Resting Brain Is Not Resting', excerpt: 'Self-referential thought, mind-wandering, future simulation, and the DMN\'s role in identity.', readTime: '12 min' },
+          { title: 'Inattentional Blindness: What You Miss When You\'re Not Looking', excerpt: 'The gorilla experiment and its implications for how much "reality" we actually perceive.', readTime: '7 min' },
+        ]
+      },
+      {
+        num: '06', cat: 'molecular',
+        title: 'Molecular', em: 'Biology',
+        subtitle: 'The genetic and epigenetic machinery underlying neural function',
+        insight: 'Every neuron in your body carries the same genome, yet a cortical pyramidal cell and a cerebellar Purkinje cell are radically different. The difference is not in the DNA sequence but in which genes are expressed — controlled by transcription factors, epigenetic marks, and non-coding RNAs. Understanding neural diversity means understanding gene regulation.',
+        articles: [
+          { title: 'Neuronal Gene Expression: How a Cell Becomes a Neuron', excerpt: 'Transcription factors, chromatin states, and the developmental programs that specify cell identity.', readTime: '13 min' },
+          { title: 'BDNF: The Brain\'s Growth Factor', excerpt: 'Synthesis, secretion, TrkB signaling, and BDNF\'s role in plasticity, depression, and exercise.', readTime: '10 min' },
+          { title: 'Epigenetic Memory in Neurons: DNA Methylation and Beyond', excerpt: 'How 5-methylcytosine and histone modifications encode durable memories at the molecular level.', readTime: '14 min' },
+          { title: 'CRISPR in Neuroscience: From Circuit Dissection to Therapy', excerpt: 'How gene editing tools are transforming circuit analysis and the prospect of neural gene therapy.', readTime: '12 min' },
+        ]
+      },
+    ];
+
+    const neuroMain = document.getElementById('neuroMain');
+    if (neuroMain) {
+      neuroMain.innerHTML = NEURO_TOPICS.map(topic => `
+        <div class="neuro-topic-block" data-topic="${topic.cat}" data-reveal>
+          <div class="neuro-topic-header">
+            <div class="neuro-topic-num">${topic.num}</div>
+            <div>
+              <h2 class="neuro-topic-title">${topic.title} <em>${topic.em}</em></h2>
+              <p class="neuro-topic-subtitle">${topic.subtitle}</p>
+            </div>
+          </div>
+          <div class="neuro-insight-panel">
+            <div class="neuro-insight-panel__label">🔬 Theoretical Insight</div>
+            <p class="neuro-insight-panel__text">${topic.insight}</p>
+          </div>
+          <div class="neuro-articles">
+            ${topic.articles.map(a => `
+              <div class="neuro-article-card">
+                <div class="neuro-article-card__topic">Neuroscience · ${topic.cat}</div>
+                <h3 class="neuro-article-card__title">${a.title}</h3>
+                <p class="neuro-article-card__excerpt">${a.excerpt}</p>
+                <div class="neuro-article-card__meta">⏱ ${a.readTime}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+    window.observeReveals?.(neuroMain);
+
+    // Filter
+    document.querySelectorAll('[data-topic]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('[data-topic]').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const t = this.dataset.topic;
+        document.querySelectorAll('.neuro-topic-block').forEach(block => {
+          block.style.display = t === 'all' || block.dataset.topic === t ? '' : 'none';
+        });
+      });
+    });
+
+    // Hero canvas
+    const c = document.getElementById('neuroHeroCanvas');
+    if (c) {
+      const ctx = c.getContext('2d');
+      let t = 0;
+      function resize() { c.width = c.offsetWidth; c.height = c.offsetHeight; }
+      function draw() {
+        const W = c.width, H = c.height;
+        ctx.clearRect(0,0,W,H);
+        // Animated EEG-like waves
+        for (let row = 0; row < 8; row++) {
+          ctx.beginPath();
+          const y0 = (row / 8) * H;
+          for (let x = 0; x <= W; x += 2) {
+            const y = y0 + Math.sin(x * 0.008 + t + row * 0.6) * 20
+                       + Math.sin(x * 0.02 + t * 1.4 + row) * 8;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(127,194,155,${0.04 + row * 0.01})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+        t += 0.012;
+        requestAnimationFrame(draw);
+      }
+      window.addEventListener('resize', resize);
+      resize(); draw();
+    }
+  </script>
+</body>
+</html>

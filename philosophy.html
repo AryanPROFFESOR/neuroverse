@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ψ Mind Space — Philosophy & Psychology of Consciousness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/philosophy.css" />
+</head>
+<body class="philo-body">
+
+  <!-- MATRIX RAIN BG -->
+  <canvas id="matrixCanvas" class="matrix-canvas"></canvas>
+
+  <!-- GLITCH OVERLAY -->
+  <div class="glitch-overlay" id="glitchOverlay"></div>
+
+  <!-- CUSTOM CURSOR -->
+  <div class="philo-cursor" id="philoCursor">
+    <div class="philo-cursor__inner"></div>
+    <div class="philo-cursor__ring"></div>
+    <div class="philo-cursor__text" id="cursorText">THINK</div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="philo-nav">
+    <a href="index.html" class="philo-nav__back">← Exit Mind Space</a>
+    <div class="philo-nav__logo">Ψ Mind Space</div>
+    <div class="philo-nav__links">
+      <a href="#consciousness" class="philo-nav__link">Consciousness</a>
+      <a href="#free-will"     class="philo-nav__link">Free Will</a>
+      <a href="#qualia"        class="philo-nav__link">Qualia</a>
+      <a href="#self"          class="philo-nav__link">Self</a>
+      <a href="#time"          class="philo-nav__link">Time</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="philo-hero">
+    <div class="philo-hero__inner">
+      <div class="philo-hero__tag">⚠ WARNING: Reality may feel optional beyond this point</div>
+      <h1 class="philo-hero__title">
+        <span class="philo-title-line" data-glitch="What IS">What IS</span>
+        <span class="philo-title-line philo-title-line--italic" data-glitch="Consciousness?">Consciousness?</span>
+      </h1>
+      <p class="philo-hero__sub">
+        You are a pattern of matter experiencing itself. These pages explore what that means —
+        through philosophy, psychology, neuroscience, and a healthy dose of ontological vertigo.
+      </p>
+      <div class="philo-hero__cta">
+        <button class="philo-btn philo-btn--primary" id="enterBtn">
+          <span>Enter the Rabbit Hole</span>
+          <span class="philo-btn__icon">🐇</span>
+        </button>
+        <button class="philo-btn philo-btn--ghost" id="randomBtn">Random Question</button>
+      </div>
+
+      <!-- Floating questions -->
+      <div class="floating-questions" id="floatingQ">
+        <div class="fq fq--1">Am I free?</div>
+        <div class="fq fq--2">What is pain?</div>
+        <div class="fq fq--3">Does time exist?</div>
+        <div class="fq fq--4">Who is "I"?</div>
+        <div class="fq fq--5">Is math invented?</div>
+        <div class="fq fq--6">What is nothing?</div>
+      </div>
+    </div>
+
+    <!-- Big orb -->
+    <div class="philo-hero__visual">
+      <canvas id="philoMainCanvas"></canvas>
+      <div class="philo-hero__label">Consciousness Simulator</div>
+    </div>
+  </section>
+
+  <!-- CONSCIOUSNESS METER -->
+  <section class="consciousness-meter" id="consciousness">
+    <div class="cm__inner">
+      <h2 class="philo-section-title">The <em>Hard Problem</em></h2>
+      <p class="philo-section-sub">David Chalmers' formulation: Why does subjective experience exist at all?</p>
+      <div class="cm__visual">
+        <div class="cm__brain-side">
+          <h3>The Easy Problems</h3>
+          <div class="cm__item">
+            <div class="cm__item-label">Attention & Focus</div>
+            <div class="progress"><div class="progress__fill" style="width:90%"></div></div>
+            <div class="cm__item-note">We can explain this mechanistically</div>
+          </div>
+          <div class="cm__item">
+            <div class="cm__item-label">Perception & Integration</div>
+            <div class="progress"><div class="progress__fill" style="width:78%"></div></div>
+            <div class="cm__item-note">Neural correlates found</div>
+          </div>
+          <div class="cm__item">
+            <div class="cm__item-label">Behavioral Response</div>
+            <div class="progress"><div class="progress__fill" style="width:95%"></div></div>
+            <div class="cm__item-note">Stimulus-response circuits mapped</div>
+          </div>
+          <div class="cm__item cm__item--hard">
+            <div class="cm__item-label">QUALIA — WHY IT FEELS LIKE ANYTHING</div>
+            <div class="progress"><div class="progress__fill" style="width:3%"></div></div>
+            <div class="cm__item-note cm__item-note--red">This is the Hard Problem. We have no idea.</div>
+          </div>
+        </div>
+        <div class="cm__gap">
+          <div class="cm__gap-label">THE EXPLANATORY GAP</div>
+          <div class="cm__gap-arrow">⟵ ??? ⟶</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE PHILOSOPHY CARDS -->
+  <section class="philo-cards-section" id="free-will">
+    <div class="philo-cards-section__header">
+      <h2 class="philo-section-title">Big <em>Questions</em></h2>
+      <p class="philo-section-sub">Click any card to dive deeper. Warning: some answers make other questions worse.</p>
+    </div>
+    <div class="philo-grid" id="philoGrid">
+      <!-- Injected by JS -->
+    </div>
+  </section>
+
+  <!-- QUALIA EXPERIENCE DEMO -->
+  <section class="qualia-demo" id="qualia">
+    <div class="qualia-demo__inner">
+      <div class="qualia-demo__text">
+        <h2 class="philo-section-title">What is <em>Red</em>?</h2>
+        <p>You and I both call this wavelength of light "red." But is what you experience when you see red the same as what I experience? We'll never know. This is the problem of qualia.</p>
+        <p>Mary the Color Scientist knew every physical fact about color but had never seen red. When she finally did — did she learn something new?</p>
+        <div class="qualia-demo__buttons">
+          <button class="philo-btn philo-btn--small philo-btn--yes" id="maryYes">Yes, she learned something → Dualism?</button>
+          <button class="philo-btn philo-btn--small philo-btn--no" id="maryNo">No, physicalism wins → But explain qualia!</button>
+        </div>
+        <div class="qualia-response" id="qualiaResponse"></div>
+      </div>
+      <div class="qualia-demo__visual">
+        <canvas id="qualiaCanvas"></canvas>
+        <div class="qualia-demo__spectrum" id="qualiaSpectrum"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THOUGHT EXPERIMENT GENERATOR -->
+  <section class="thought-gen" id="self">
+    <div class="thought-gen__inner">
+      <h2 class="philo-section-title">Thought <em>Experiment</em> Generator</h2>
+      <p class="philo-section-sub">Press the button. Contemplate. Repeat until enlightened or confused. (Usually confused.)</p>
+      <div class="thought-gen__machine">
+        <div class="thought-gen__display" id="thoughtDisplay">
+          <div class="thought-gen__thought" id="currentThought">
+            Press the button to generate your first thought experiment...
+          </div>
+          <div class="thought-gen__meta" id="thoughtMeta"></div>
+        </div>
+        <button class="thought-gen__btn" id="thoughtBtn">
+          <span>Generate Thought Experiment</span>
+          <div class="thought-gen__spinner" id="thoughtSpinner"></div>
+        </button>
+      </div>
+      <div class="thought-gen__context" id="thoughtContext"></div>
+    </div>
+  </section>
+
+  <!-- TIMELINE OF CONSCIOUSNESS THEORIES -->
+  <section class="philo-timeline" id="time">
+    <div class="philo-timeline__inner">
+      <h2 class="philo-section-title">Theories of <em>Mind</em></h2>
+      <p class="philo-section-sub">From Descartes to Global Workspace Theory</p>
+      <div class="philo-timeline-track" id="philoTimeline">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE BRAIN REGIONS -->
+  <section class="brain-explorer">
+    <div class="brain-explorer__inner">
+      <h2 class="philo-section-title">The <em>Philosophical</em> Brain</h2>
+      <p class="philo-section-sub">Hover over regions to explore their role in consciousness and experience</p>
+      <div class="brain-explorer__canvas-wrap">
+        <canvas id="brainCanvas"></canvas>
+        <div class="brain-info" id="brainInfo">
+          <div class="brain-info__name" id="brainName">Hover a region</div>
+          <div class="brain-info__desc" id="brainDesc">Each region contributes a unique thread to the tapestry of experience.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHICAL QUOTES MARQUEE -->
+  <div class="quote-marquee">
+    <div class="quote-marquee__track">
+      <span>"Cogito, ergo sum" — Descartes</span>
+      <span>✦</span>
+      <span>"The brain is the last and grandest biological frontier" — James Watson</span>
+      <span>✦</span>
+      <span>"Consciousness is a much smaller part of our mental life than we are conscious of" — William James</span>
+      <span>✦</span>
+      <span>"The self is a narrative construction" — Daniel Dennett</span>
+      <span>✦</span>
+      <span>"What is it like to be a bat?" — Thomas Nagel</span>
+      <span>✦</span>
+      <span>"The map is not the territory" — Alfred Korzybski</span>
+      <span>✦</span>
+      <span>"Cogito, ergo sum" — Descartes</span>
+      <span>✦</span>
+      <span>"The brain is the last and grandest biological frontier" — James Watson</span>
+      <span>✦</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="philo-footer">
+    <div class="philo-footer__inner">
+      <p class="philo-footer__note">You've reached the edge of what can be written. The rest is up to you.</p>
+      <a href="index.html" class="philo-btn philo-btn--ghost">← Return to Neuroscience</a>
+    </div>
+  </footer>
+
+  <script src="js/philosophy.js" type="module"></script>
+</body>
+</html>

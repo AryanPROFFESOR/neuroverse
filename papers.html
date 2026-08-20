@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paper Explanations — NeuroVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <style>
+    /* ── PAPERS PAGE STYLES ──────────────────────────────── */
+    .papers-hero {
+      padding: calc(var(--nav-h) + 4rem) var(--space-xl) 4rem;
+      background: var(--clr-bg);
+      border-bottom: 1px solid var(--clr-border);
+      position: relative;
+      overflow: hidden;
+    }
+    .papers-hero::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 50%; height: 100%;
+      background: radial-gradient(ellipse at 80% 50%, rgba(79,163,227,0.06), transparent 70%);
+      pointer-events: none;
+    }
+    .papers-hero__inner {
+      max-width: var(--max-width); margin: 0 auto;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: var(--space-xl);
+    }
+    .papers-hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 7rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+    }
+    .papers-hero__title em { font-style: italic; color: var(--clr-accent-2); }
+    .papers-hero__meta {
+      display: flex; flex-direction: column; gap: var(--space-md);
+      align-items: flex-end;
+    }
+    .papers-hero__count {
+      font-family: var(--font-display);
+      font-size: 5rem;
+      font-weight: 800;
+      color: var(--clr-accent);
+      line-height: 1;
+    }
+    .papers-hero__count-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--clr-text-3);
+      text-transform: uppercase;
+    }
+
+    /* FILTERS */
+    .papers-controls {
+      max-width: var(--max-width); margin: 0 auto;
+      padding: var(--space-xl) var(--space-xl) 0;
+      display: flex; gap: var(--space-md); align-items: center;
+      flex-wrap: wrap;
+    }
+    .papers-controls__search { flex: 1; min-width: 200px; }
+
+    /* PAPERS LIST */
+    .papers-main {
+      max-width: var(--max-width); margin: 0 auto;
+      padding: var(--space-xl);
+      <script src="js/shared.js" type="module"></script>
+    }
+    .paper-item__tldr-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--clr-accent-2);
+      text-transform: uppercase;
+      margin-bottom: var(--space-xs);
+    }
+    .paper-item__tldr-text {
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--clr-text);
+      line-height: 1.7;
+    }
+    .paper-item__explanation {
+      font-size: 0.95rem;
+      color: var(--clr-text-2);
+      line-height: 1.85;
+      margin-bottom: var(--space-lg);
+    }
+    .paper-item__key-findings { display: flex; flex-direction: column; gap: var(--space-sm); }
+    .paper-item__finding {
+      display: flex; gap: var(--space-md);
+      background: var(--clr-bg);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      font-size: 0.88rem;
+      color: var(--clr-text-2);
+    }
+    .paper-item__finding-icon { flex-shrink: 0; font-size: 1rem; }
+
+    /* SIDEBAR */
+    .papers-sidebar { position: sticky; top: calc(var(--nav-h) + 2rem); }
+    .sidebar-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+    .sidebar-card__title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--clr-text-3);
+      text-transform: uppercase;
+      margin-bottom: var(--space-md);
+    }
+    .reading-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+    .reading-list__item {
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      color: var(--clr-text-2);
+      cursor: pointer;
+      transition: all var(--dur-fast);
+      border: 1px solid transparent;
+    }
+    .reading-list__item:hover { border-color: var(--clr-border); color: var(--clr-accent); }
+    .reading-list__item.active { background: rgba(79,163,227,0.08); border-color: var(--clr-border-hover); color: var(--clr-accent); }
+    .field-cloud { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+    .difficulty-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--clr-text-2); margin-bottom: var(--space-xs); }
+    .difficulty-row span:last-child { font-family: var(--font-mono); font-size: 0.72rem; color: var(--clr-accent); }
+
+    @media (max-width: 1024px) {
+      .papers-main { grid-template-columns: 1fr; }
+      .papers-sidebar { position: static; }
+    }
+    @media (max-width: 768px) {
+      .papers-main, .papers-controls { padding: var(--space-lg); }
+    }
+  </style>
+</head>
+<body class="site-body" data-theme="dark">
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav class="nav scrolled" id="mainNav">
+    <div class="nav__logo">
+      <span class="nav__logo-mark">N</span>
+      <span class="nav__logo-text">euro<em>Verse</em></span>
+    </div>
+    <button class="nav__toggle" id="navToggle"><span></span><span></span><span></span></button>
+    <ul class="nav__links" id="navLinks">
+      <li><a href="index.html"        class="nav__link"        data-label="01">Blog</a></li>
+      <li><a href="research.html"     class="nav__link"        data-label="02">Research</a></li>
+      <li><a href="papers.html"       class="nav__link active" data-label="03">Papers</a></li>
+      <li><a href="neuroscience.html" class="nav__link"        data-label="04">Neuro</a></li>
+      <li><a href="cv.html"           class="nav__link"        data-label="05">CV</a></li>
+      <li><a href="philosophy.html"   class="nav__link nav__link--special" data-label="∞">Ψ Mind</a></li>
+    </ul>
+  </nav>
+
+  <main style="padding: calc(var(--nav-h) + 4rem) var(--space-xl); max-width:var(--max-width); margin:0 auto;">
+    <section style="background:var(--clr-surface); border:1px solid var(--clr-border); border-radius:var(--radius-lg); padding:4rem; text-align:center;">
+      <h1 style="font-family:var(--font-display); font-size:3rem; margin-bottom:1rem;">Papers</h1>
+      <p style="font-size:1.05rem; color:var(--clr-text-2);">This section is being updated and currently has no entries. Content will be added here soon.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__bottom" style="border-top:1px solid var(--clr-border);padding:var(--space-lg) var(--space-xl)">
+      <p>© 2026 NeuroVerse</p>
+    </div>
+  </footer>
+
+  <script src="js/shared.js" type="module"></script>
+</body>
+</html>

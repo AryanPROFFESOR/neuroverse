@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroVerse — Brain, Biology & Beyond</title>
+  <meta name="description" content="A research-driven exploration of neuroscience, stem cell & molecular biology, electronics, and the philosophy of mind." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body class="site-body" data-theme="dark">
+
+  <!-- CUSTOM CURSOR -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- LOADING SCREEN -->
+  <div class="loader" id="loader">
+    <div class="loader__inner">
+      <div class="loader__neuro">
+        <svg viewBox="0 0 200 200" class="loader__brain-svg">
+          <circle class="loader__pulse" cx="100" cy="100" r="80" />
+          <circle class="loader__pulse loader__pulse--2" cx="100" cy="100" r="60" />
+          <circle class="loader__pulse loader__pulse--3" cx="100" cy="100" r="40" />
+          <!-- Neural connections -->
+          <line class="loader__synapse" x1="100" y1="20" x2="180" y2="100"/>
+          <line class="loader__synapse" x1="100" y1="20" x2="20"  y2="100"/>
+          <line class="loader__synapse" x1="20"  y1="100" x2="100" y2="180"/>
+          <line class="loader__synapse" x1="180" y1="100" x2="100" y2="180"/>
+          <line class="loader__synapse" x1="100" y1="20" x2="100" y2="180"/>
+          <line class="loader__synapse" x1="20"  y1="100" x2="180" y2="100"/>
+          <circle class="loader__node" cx="100" cy="20"  r="5"/>
+          <circle class="loader__node" cx="180" cy="100" r="5"/>
+          <circle class="loader__node" cx="100" cy="180" r="5"/>
+          <circle class="loader__node" cx="20"  cy="100" r="5"/>
+          <circle class="loader__node" cx="100" cy="100" r="8"/>
+        </svg>
+      </div>
+      <p class="loader__text">Initializing Neural Network…</p>
+      <div class="loader__bar"><div class="loader__bar-fill" id="loaderBar"></div></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav" id="mainNav">
+    <div class="nav__logo">
+      <span class="nav__logo-mark">N</span>
+      <span class="nav__logo-text">euro<em>Verse</em></span>
+    </div>
+    <button class="nav__toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav__links" id="navLinks">
+      <li><a href="index.html"        class="nav__link active"  data-label="01">Blog</a></li>
+      <li><a href="research.html"     class="nav__link"         data-label="02">Research</a></li>
+      <li><a href="papers.html"       class="nav__link"         data-label="03">Papers</a></li>
+      <li><a href="neuroscience.html" class="nav__link"         data-label="04">Neuro</a></li>
+      <li><a href="cv.html"           class="nav__link"         data-label="05">CV</a></li>
+      <li><a href="philosophy.html"   class="nav__link nav__link--special" data-label="∞">Ψ Mind</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero-track" id="heroTrack">
+    <section class="hero" id="hero">
+      <div class="hero__canvas" id="heroCanvas"></div>
+      <div class="hero__content">
+        <p class="hero__eyebrow reveal-up">Neuroscience · Stem Cell Biology · Electronics</p>
+        <h1 class="hero__title reveal-up" data-typewriter="true">
+          <span class="hero__title-line">Mapping the</span>
+          <span class="hero__title-line hero__title-line--accent">Architecture</span>
+          <span class="hero__title-line">of Thought</span>
+        </h1>
+        <p class="hero__sub reveal-up">
+          Deep explorations in neuroscience, stem cell & molecular biology, and the electronics that make it
+          measurable — distilled into research articles, paper breakdowns, and theoretical insights.
+        </p>
+        <div class="hero__cta reveal-up">
+          <a href="#blog" class="btn btn--primary">Explore Blog</a>
+          <a href="research.html" class="btn btn--ghost">View Research</a>
+        </div>
+      </div>
+      <div class="hero__scroll-indicator">
+        <span>Scroll</span>
+        <div class="hero__scroll-line"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SEQUENCE PREDICTION ENGINE removed from homepage (moved to Research page) -->
+
+  <!-- FEATURED BLOG -->
+  <section class="section blog-section" id="blog">
+    <div class="section__header">
+      <p class="section__label">Latest Writing</p>
+      <h2 class="section__title">From the <em>Blog</em></h2>
+      <div class="section__line"></div>
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="filter-tabs" id="blogFilter">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="neuroscience">Neuroscience</button>
+      <button class="filter-tab" data-filter="biology">Molecular Biology</button>
+    </div>
+
+    <div class="blog-grid" id="blogGrid">
+      <!-- Cards injected by JS from BLOG_DATA -->
+    </div>
+  </section>
+
+  <!-- THEORETICAL INSIGHTS TEASER -->
+  <section class="section insight-teaser">
+    <div class="insight-teaser__bg"></div>
+    <div class="insight-teaser__content">
+      <p class="section__label">Theoretical Framework</p>
+      <h2 class="section__title">Insights that <em>Reframe</em><br>How We See Biology</h2>
+      <p class="insight-teaser__desc">
+        From the thermodynamics of neural firing to the information geometry of perception —
+        original theoretical pieces that sit at the intersection of math, biology, and philosophy.
+      </p>
+      <a href="neuroscience.html" class="btn btn--primary">Explore Insights</a>
+    </div>
+    <div class="insight-teaser__visual">
+      <canvas id="insightCanvas" class="insight-teaser__canvas"></canvas>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY GATEWAY -->
+  <section class="section philo-gateway">
+    <div class="philo-gateway__inner">
+      <div class="philo-gateway__text">
+        <p class="section__label">Different Universe</p>
+        <h2 class="philo-gateway__title">Enter the <em>Mind</em></h2>
+        <p class="philo-gateway__desc">
+          A completely different dimension — philosophical and psychological explorations of
+          consciousness, free will, qualia, and the hard problem of mind.
+          Warning: reality may feel optional.
+        </p>
+        <a href="philosophy.html" class="btn btn--neon">Enter Ψ Mind Space →</a>
+      </div>
+      <div class="philo-gateway__orb" id="philoOrb">
+        <canvas id="orbCanvas"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <section class="section uniprot-gateway" style="padding-top: 0; padding-bottom: var(--space-2xl);">
+    <div class="section__header">
+      <p class="section__label">Live Database Access</p>
+      <h2 class="section__title">UniProt <em>Terminal</em></h2>
+      <p style="font-size: 0.8rem; color: var(--clr-text-3); font-family: var(--font-mono); margin-top: 0.5rem; margin-bottom: 1.5rem;">
+        Data and interface provided by the Universal Protein Resource (uniprot.org).
+      </p>
+      <button id="loadUniprotBtn" class="btn btn--outline" style="border-color: var(--clr-text-2); color: var(--clr-text-2);">
+        Initialize Connection to UniProt
+      </button>
+    </div>
+    
+    <div id="uniprotWrapper" style="display: none; width: 100%; height: 700px; border: 1px solid var(--clr-border); border-radius: var(--radius-md); overflow: hidden;">
+      <iframe id="uniprotFrame" loading="lazy" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('loadUniprotBtn').addEventListener('click', function() {
+      document.getElementById('uniprotWrapper').style.display = 'block';
+      document.getElementById('uniprotFrame').src = 'https://www.uniprot.org/';
+      this.style.display = 'none'; // Hide the button after clicking
+    });
+  </script>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <span class="nav__logo-mark">N</span>
+        <span class="nav__logo-text">euro<em>Verse</em></span>
+        <p>Bridging neuroscience, biology, and philosophy through rigorous research and creative exploration.</p>
+      </div>
+      <div class="footer__links">
+        <div class="footer__col">
+          <h4>Research</h4>
+          <a href="research.html">Neuroscience</a>
+          <a href="research.html">Stem Cell & Molecular Biology</a>
+          <a href="research.html">Electronics & Embedded Systems</a>
+        </div>
+        <div class="footer__col">
+          <h4>Content</h4>
+          <a href="papers.html">Paper Explanations</a>
+          <a href="index.html">Blog</a>
+        </div>
+        <div class="footer__col">
+          <h4>Personal</h4>
+          <a href="cv.html">Curriculum Vitae</a>
+          <a href="philosophy.html">Ψ Mind Space</a>
+          <a href="cv.html#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>© 2026 NeuroVerse. Built with curiosity and caffeine.</p>
+      <div class="footer__socials">
+        <a href="https://github.com/AryanPROFFESOR" target="_blank" rel="noopener" aria-label="GitHub">⌥</a>
+        <a href="https://linkedin.com/in/aryan-09176b1b6" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+  <script src="js/main.js" type="module"></script>
+</body>
+</html>

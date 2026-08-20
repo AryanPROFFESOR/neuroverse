@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neuroscience Algorithm Simulation Suite</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#000000;--surface:#0f0f0f;--card:#111111;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
+  --accent:#ffffff;--accent2:#e0e0e0;--accent3:#cfcfcf;--accent4:#b5b5b5;
+  --text:#ffffff;--muted:#b0b0b0;--dim:#717171;
+  --green:#ffffff;--blue:#d0d0d0;--red:#a8a8a8;--purple:#8a8a8a;--amber:#c9c9c9;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding-top:56px}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600}
+code,pre,input[type=number],input[type=range]{font-family:'JetBrains Mono',monospace}
+
+/* Top bar */
+.suite-topbar{position:fixed;top:0;left:0;right:0;z-index:1000;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 1rem 0 1.25rem;background:rgba(0,0,0,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.suite-topbar__brand{display:flex;align-items:center;gap:0.75rem;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:0.04em}
+.suite-topbar__brand span{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.18em}
+.suite-topbar__links{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
+.suite-topbar__link{display:inline-flex;align-items:center;min-height:34px;padding:0 0.9rem;border:1px solid var(--border);border-radius:999px;color:var(--text);font-family:'Inter',sans-serif;font-size:0.75rem;transition:all 0.15s}
+.suite-topbar__link:hover{border-color:var(--text);background:rgba(255,255,255,0.05)}
+
+/* Layout */
+.shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.main{padding:2rem;max-width:1100px}
+
+/* Sidebar */
+.sidebar-header{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.85rem;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase}
+.sidebar-header p{font-size:0.7rem;color:var(--muted);margin-top:3px}
+.category-label{font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:1rem 1.25rem 0.3rem;font-weight:600}
+.algo-btn{display:block;width:100%;text-align:left;background:none;border:none;padding:0.45rem 1.25rem;font-size:0.78rem;color:var(--muted);cursor:pointer;font-family:'Sora',sans-serif;border-left:2px solid transparent;transition:all 0.15s}
+.algo-btn:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.algo-btn.active{color:var(--text);border-left-color:var(--text);background:rgba(255,255,255,0.06)}
+.algo-number{font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--dim);margin-right:6px}
+
+/* Cards */
+.sim-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:1.5rem}
+.sim-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;gap:1rem}
+.sim-title{font-size:1.2rem;font-weight:600;color:var(--text)}
+.sim-tag{font-size:0.65rem;padding:3px 10px;border-radius:20px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap}
+.tag-epilepsy{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid var(--border)}
+.tag-neuron{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid var(--border)}
+.tag-network{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid var(--border)}
+.tag-oscillation{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid var(--border)}
+.tag-neuro{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid var(--border)}
+
+/* Equation box */
+.eq-box{background:#0d1117;border:1px solid var(--border2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-family:'JetBrains Mono',monospace;font-size:0.78rem;line-height:1.9;color:#b8c7e0}
+.eq-box .eq-label{font-size:0.65rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem}
+.eq-comment{color:var(--muted)}
+.eq-var{color:var(--accent4)}
+.eq-num{color:var(--amber)}
+.eq-op{color:var(--accent)}
+
+/* Params */
+.params-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin:1rem 0}
+.param-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem}
+.param-label{font-size:0.7rem;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between}
+.param-val{font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text);font-weight:500}
+.param-item input[type=range]{width:100%;margin-top:4px;accent-color:var(--accent)}
+.param-item input[type=number]{width:80px;background:#0d1117;border:1px solid var(--border2);color:var(--text);border-radius:4px;padding:2px 6px;font-size:0.78rem}
+
+/* Run btn */
+.run-btn{background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:0.6rem 1.5rem;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.03em;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.run-btn:hover{background:#eaeaea;transform:translateY(-1px)}
+.run-btn:active{transform:translateY(0)}
+.reset-btn{background:none;color:var(--muted);border:1px solid var(--border2);border-radius:8px;padding:0.6rem 1rem;font-size:0.82rem;cursor:pointer;font-family:'Inter',sans-serif;margin-left:8px;transition:all 0.15s}
+.reset-btn:hover{color:var(--text);border-color:var(--text)}
+
+/* Plot area */
+.plot-area{background:#0d1117;border:1px solid var(--border);border-radius:8px;margin-top:1rem;padding:1rem;position:relative}
+.plot-title{font-size:0.7rem;color:var(--muted);margin-bottom:0.5rem;letter-spacing:0.06em;text-transform:uppercase}
+.plot-wrap{position:relative;width:100%}
+
+/* Metrics row */
+.metrics-row{display:flex;gap:0.75rem;margin:1rem 0;flex-wrap:wrap}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;min-width:110px}
+.metric-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.metric-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--text);margin-top:2px}
+.metric-val.green,.metric-val.blue,.metric-val.red,.metric-val.purple{color:var(--text)}
+
+/* Description */
+.desc-text{font-size:0.82rem;color:var(--muted);line-height:1.7;margin-bottom:0.75rem}
+.param-desc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.5rem 0 1rem;font-size:0.75rem}
+.param-desc-row{display:flex;gap:8px;align-items:baseline}
+.pname{font-family:'JetBrains Mono',monospace;color:var(--accent4);min-width:60px;font-size:0.72rem}
+.pdesc{color:var(--muted)}
+
+/* Controls row */
+.controls-row{display:flex;align-items:center;gap:8px;margin-top:1rem;flex-wrap:wrap}
+.section-divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+.hidden{display:none}
+.status-bar{font-size:0.7rem;color:var(--muted);margin-left:auto;font-family:'JetBrains Mono',monospace}
+.running{color:var(--amber)}
+.done{color:var(--green)}
+
+/* Welcome */
+.welcome{text-align:center;padding:4rem 2rem;max-width:600px;margin:0 auto}
+.welcome h1{font-size:2rem;font-weight:700;color:var(--text);margin-bottom:0.75rem}
+.welcome p{color:var(--muted);line-height:1.7;font-size:0.9rem}
+.welcome-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-top:2rem;text-align:left}
+.w-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.w-card-num{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent);opacity:0.6}
+.w-card-label{font-size:0.75rem;color:var(--muted);margin-top:4px}
+
+/* Phase plot */
+.dual-plot{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+@media (max-width: 980px){
+  .suite-topbar{height:auto;min-height:56px;align-items:flex-start;flex-direction:column;gap:0.5rem;padding:0.75rem 1rem}
+  .suite-topbar__links{width:100%}
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:relative;top:0;height:auto;max-height:42vh;border-right:none;border-bottom:1px solid var(--border)}
+  .main{padding:1rem}
+  .welcome{padding:3rem 1rem}
+  .welcome-grid,.dual-plot{grid-template-columns:1fr}
+  .sim-card{padding:1.15rem}
+  .sim-header{flex-direction:column}
+  .params-grid,.param-desc-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="suite-topbar">
+  <div class="suite-topbar__brand">NeuroSim Suite <span>simulation</span></div>
+  <div class="suite-topbar__links">
+    <a class="suite-topbar__link" href="research.html">Back to Research</a>
+    <a class="suite-topbar__link" href="index.html">Home</a>
+    <a class="suite-topbar__link" href="#main-area">Current Model</a>
+  </div>
+</div>
+<div class="shell">
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>NeuroSim Suite</h2>
+    <p>25 Research-grade algorithms</p>
+  </div>
+  <div class="category-label">Single Neuron Models</div>
+  <button class="algo-btn" data-algo="hh" onclick="loadAlgo('hh',this)"><span class="algo-number">01</span>Hodgkin-Huxley</button>
+  <button class="algo-btn" data-algo="izh" onclick="loadAlgo('izh',this)"><span class="algo-number">02</span>Izhikevich</button>
+  <button class="algo-btn" data-algo="fhn" onclick="loadAlgo('fhn',this)"><span class="algo-number">03</span>FitzHugh-Nagumo</button>
+  <button class="algo-btn" data-algo="lif" onclick="loadAlgo('lif',this)"><span class="algo-number">04</span>Leaky Integrate-and-Fire</button>
+  <button class="algo-btn" data-algo="adex" onclick="loadAlgo('adex',this)"><span class="algo-number">05</span>AdEx (Adaptive Exp)</button>
+  <button class="algo-btn" data-algo="morrislecar" onclick="loadAlgo('morrislecar',this)"><span class="algo-number">06</span>Morris-Lecar</button>
+  <button class="algo-btn" data-algo="hindmarshrose" onclick="loadAlgo('hindmarshrose',this)"><span class="algo-number">07</span>Hindmarsh-Rose</button>
+  
+  <div class="category-label">Epilepsy / Seizure</div>
+  <button class="algo-btn" data-algo="epileptor" onclick="loadAlgo('epileptor',this)"><span class="algo-number">08</span>Epileptor (Jirsa 2014)</button>
+  <button class="algo-btn" data-algo="epileptor2d" onclick="loadAlgo('epileptor2d',this)"><span class="algo-number">09</span>Epileptor 2D</button>
+  <button class="algo-btn" data-algo="wendling" onclick="loadAlgo('wendling',this)"><span class="algo-number">10</span>Wendling Cortical</button>
+  <button class="algo-btn" data-algo="jansen" onclick="loadAlgo('jansen',this)"><span class="algo-number">11</span>Jansen-Rit NMM</button>
+
+  <div class="category-label">Network / Population</div>
+  <button class="algo-btn" data-algo="wc" onclick="loadAlgo('wc',this)"><span class="algo-number">12</span>Wilson-Cowan</button>
+  <button class="algo-btn" data-algo="brunel" onclick="loadAlgo('brunel',this)"><span class="algo-number">13</span>Brunel Network</button>
+  <button class="algo-btn" data-algo="kuramoto" onclick="loadAlgo('kuramoto',this)"><span class="algo-number">14</span>Kuramoto Oscillators</button>
+  <button class="algo-btn" data-algo="stg" onclick="loadAlgo('stg',this)"><span class="algo-number">15</span>STG (Stomatogastric)</button>
+
+  <div class="category-label">Synaptic / Plasticity</div>
+  <button class="algo-btn" data-algo="stdp" onclick="loadAlgo('stdp',this)"><span class="algo-number">16</span>STDP (Spike-Timing)</button>
+  <button class="algo-btn" data-algo="tsodyks" onclick="loadAlgo('tsodyks',this)"><span class="algo-number">17</span>Tsodyks-Markram</button>
+  <button class="algo-btn" data-algo="destexhe" onclick="loadAlgo('destexhe',this)"><span class="algo-number">18</span>Destexhe Synapse</button>
+
+  <div class="category-label">Rhythms / EEG</div>
+  <button class="algo-btn" data-algo="thalcortical" onclick="loadAlgo('thalcortical',this)"><span class="algo-number">19</span>Thalamocortical</button>
+  <button class="algo-btn" data-algo="boldmodel" onclick="loadAlgo('boldmodel',this)"><span class="algo-number">20</span>Balloon-Windkessel (fMRI)</button>
+  <button class="algo-btn" data-algo="meanfield" onclick="loadAlgo('meanfield',this)"><span class="algo-number">21</span>Mean-Field EEG</button>
+
+  <div class="category-label">Computational / Signal</div>
+  <button class="algo-btn" data-algo="kalmanneuro" onclick="loadAlgo('kalmanneuro',this)"><span class="algo-number">22</span>Kalman Neural Filter</button>
+  <button class="algo-btn" data-algo="cableneuron" onclick="loadAlgo('cableneuron',this)"><span class="algo-number">23</span>Cable Equation</button>
+  <button class="algo-btn" data-algo="ornstein" onclick="loadAlgo('ornstein',this)"><span class="algo-number">24</span>Ornstein-Uhlenbeck</button>
+  <button class="algo-btn" data-algo="spikesorting" onclick="loadAlgo('spikesorting',this)"><span class="algo-number">25</span>Spike Sorting PCA</button>
+</nav>
+
+<!-- MAIN -->
+<main class="main" id="main-area">
+  <div class="welcome">
+    <h1>Neuroscience Simulation Suite</h1>
+    <p>25 research-grade algorithms — from single-neuron biophysics to whole-brain network dynamics. Each simulator includes full differential equations, parameter controls, and publication-quality plots.</p>
+    <div class="welcome-grid">
+      <div class="w-card"><div class="w-card-num">25</div><div class="w-card-label">Algorithms</div></div>
+      <div class="w-card"><div class="w-card-num">6</div><div class="w-card-label">Categories</div></div>
+      <div class="w-card"><div class="w-card-num">∞</div><div class="w-card-label">Parameter space</div></div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+/* ========================================================
+   NEUROSCIENCE SIMULATION SUITE — Full Algorithm Library
+   ======================================================== */
+
+const ALGOS = {
+
+/* ============ 01 HODGKIN-HUXLEY ============ */
+hh: {
+  title:"Hodgkin-Huxley Neuron",tag:"tag-neuron",tagLabel:"Single Neuron",
+  desc:"The Nobel Prize-winning model (1952) of action potential generation in the squid giant axon. Describes ionic currents through voltage-gated Na⁺ and K⁺ channels and a leak conductance. The foundation of computational neuroscience.",
+  equations:`<span class="eq-label">Membrane voltage (Runge-Kutta 4)</span>
+<span class="eq-var">C_m</span> · dV/dt = <span class="eq-var">I_ext</span> - <span class="eq-var">g_Na</span>·<span class="eq-var">m³h</span>·(V-<span class="eq-num">50</span>) - <span class="eq-var">g_K</span>·<span class="eq-var">n⁴</span>·(V+<span class="eq-num">77</span>) - <span class="eq-var">g_L</span>·(V+<span class="eq-num">54.4</span>)
+
+<span class="eq-label">Gating variables  α,β = voltage-dependent rate functions</span>
+dm/dt = <span class="eq-op">α_m</span>(V)·(1-m) - <span class="eq-op">β_m</span>(V)·m
+dh/dt = <span class="eq-op">α_h</span>(V)·(1-h) - <span class="eq-op">β_h</span>(V)·h
+dn/dt = <span class="eq-op">α_n</span>(V)·(1-n) - <span class="eq-op">β_n</span>(V)·n
+
+<span class="eq-label">Rate functions (Hodgkin-Huxley 1952)</span>
+α_m = <span class="eq-num">0.1</span>·(V+<span class="eq-num">40</span>)/(1-exp(-(V+<span class="eq-num">40</span>)/<span class="eq-num">10</span>))
+α_h = <span class="eq-num">0.07</span>·exp(-(V+<span class="eq-num">65</span>)/<span class="eq-num">20</span>)
+α_n = <span class="eq-num">0.01</span>·(V+<span class="eq-num">55</span>)/(1-exp(-(V+<span class="eq-num">55</span>)/<span class="eq-num">10</span>))`,
+  params:[
+    {id:"hh_iext",label:"I_ext (μA/cm²)",min:0,max:30,step:0.5,val:10,desc:"Applied current"},
+    {id:"hh_gna",label:"g_Na (mS/cm²)",min:50,max:200,step:5,val:120,desc:"Max Na conductance"},
+    {id:"hh_gk",label:"g_K (mS/cm²)",min:10,max:80,step:1,val:36,desc:"Max K conductance"},
+    {id:"hh_gl",label:"g_L (mS/cm²)",min:0.1,max:1,step:0.05,val:0.3,desc:"Leak conductance"},
+    {id:"hh_cm",label:"C_m (μF/cm²)",min:0.5,max:3,step:0.1,val:1,desc:"Membrane capacitance"},
+    {id:"hh_dur",label:"Duration (ms)",min:20,max:200,step:10,val:80,desc:"Simulation length"},
+  ],
+  paramDescs:[
+    {n:"V",d:"Membrane voltage (mV)"},
+    {n:"m",d:"Na activation gate [0,1]"},
+    {n:"h",d:"Na inactivation gate [0,1]"},
+    {n:"n",d:"K activation gate [0,1]"},
+    {n:"g_Na",d:"Max Na conductance (mS/cm²)"},
+    {n:"E_Na",d:"Na reversal potential +50mV"},
+    {n:"E_K",d:"K reversal potential -77mV"},
+    {n:"I_ext",d:"External stimulus current"},
+  ],
+  run: function(p){
+    const dt=0.01, T=p.hh_dur, gNa=p.hh_gna, gK=p.hh_gk, gL=p.hh_gl, Cm=p.hh_cm, Iext=p.hh_iext;
+    const ENa=50,EK=-77,EL=-54.4;
+    let V=-65,m=0.05,h=0.6,n=0.32;
+    const am=v=>{let x=(v+40); return Math.abs(x)<1e-7?1:(0.1*x/(1-Math.exp(-x/10)))};
+    const bm=v=>4*Math.exp(-(v+65)/18);
+    const ah=v=>0.07*Math.exp(-(v+65)/20);
+    const bh=v=>1/(1+Math.exp(-(v+35)/10));
+    const an=v=>{let x=(v+55); return Math.abs(x)<1e-7?0.1:(0.01*x/(1-Math.exp(-x/10)))};
+    const bn=v=>0.125*Math.exp(-(v+65)/80);
+    const ts=[],Vs=[],ms=[],hs=[],ns=[],spikes=[];
+    const steps=Math.round(T/dt);
+    for(let i=0;i<steps;i++){
+      const t=i*dt;
+      const INa=gNa*m*m*m*h*(V-ENa),IK=gK*n*n*n*n*(V-EK),IL=gL*(V-EL);
+      const dV=(Iext-INa-IK-IL)/Cm;
+      const dm_=(am(V)*(1-m)-bm(V)*m);
+      const dh_=(ah(V)*(1-h)-bh(V)*h);
+      const dn_=(an(V)*(1-n)-bn(V)*n);
+      const Vp=V+dt*dV,mp=Math.max(0,Math.min(1,m+dt*dm_)),hp=Math.max(0,Math.min(1,h+dt*dh_)),np=Math.max(0,Math.min(1,n+dt*dn_));
+      if(V<-20&&Vp>=-20) spikes.push(t);
+      if(i%10===0){ts.push(parseFloat(t.toFixed(2)));Vs.push(parseFloat(Vp.toFixed(2)));ms.push(parseFloat(mp.toFixed(3)));hs.push(parseFloat(hp.toFixed(3)));ns.push(parseFloat(np.toFixed(3)));}
+      V=Vp;m=mp;h=hp;n=np;
+    }
+    const isi=spikes.length>1?((spikes[spikes.length-1]-spikes[0])/(spikes.length-1)).toFixed(2):'—';
+    const fr=spikes.length>0?(spikes.length/(T/1000)).toFixed(1):'0';
+    return{ts,series:[
+      {label:'V (mV)',data:Vs,color:'#4f8ef7'},
+      {label:'m (Na act)',data:ms.map(x=>x*100-80),color:'#00d4aa'},
+      {label:'h (Na inact)',data:hs.map(x=>x*100-80),color:'#f76b4f'},
+      {label:'n (K act)',data:ns.map(x=>x*100-80),color:'#c084fc'},
+    ],metrics:[
+      {label:"Spike count",val:spikes.length,cls:"green"},
+      {label:"Fire rate (Hz)",val:fr,cls:"blue"},
+      {label:"Mean ISI (ms)",val:isi,cls:""},
+      {label:"Peak V (mV)",val:Vs.length?Math.max(...Vs).toFixed(1):'—',cls:"red"},
+    ],phase:{x:Vs,y:ms,xlabel:"V (mV)",ylabel:"m (Na act)"}};
+  }
+},
+
+/* ============ 02 IZHIKEVICH ============ */
+izh: {
+  title:"Izhikevich Neuron",tag:"tag-neuron",tagLabel:"Single Neuron",
+  desc:"A computationally efficient model (2003) capable of reproducing 20+ neuron firing patterns: regular spiking, fast spiking, chattering, bursting, etc. — using only 2 ODEs.",
+  equations:`<span class="eq-label">State equations</span>
+dv/dt = <span class="eq-num">0.04</span>v² + <span class="eq-num">5</span>v + <span class="eq-num">140</span> - <span class="eq-var">u</span> + <span class="eq-var">I</span>
+du/dt = <span class="eq-var">a</span>·(<span class="eq-var">b</span>·v - u)
+
+<span class="eq-label">Reset condition (spike fired when v ≥ 30)</span>
+if v ≥ <span class="eq-num">30</span>: v ← <span class="eq-var">c</span>,  u ← u + <span class="eq-var">d</span>
+
+<span class="eq-label">Parameters control firing pattern</span>
+<span class="eq-comment">RS (Regular Spiking): a=0.02 b=0.2 c=-65 d=8</span>
+<span class="eq-comment">FS (Fast Spiking): a=0.1 b=0.2 c=-65 d=2</span>
+<span class="eq-comment">CH (Chattering): a=0.02 b=0.2 c=-50 d=2</span>
+<span class="eq-comment">IB (Intrinsic Bursting): a=0.02 b=0.2 c=-55 d=4</span>`,
+  params:[
+    {id:"izh_a",label:"a (recovery speed)",min:0.01,max:0.2,step:0.01,val:0.02,desc:"Recovery time scale"},
+    {id:"izh_b",label:"b (sensitivity)",min:0.1,max:0.5,step:0.05,val:0.2,desc:"Resonance/sensitivity"},
+    {id:"izh_c",label:"c (reset voltage)",min:-80,max:-40,step:1,val:-65,desc:"After-spike reset value"},
+    {id:"izh_d",label:"d (reset recovery)",min:0.5,max:10,step:0.5,val:8,desc:"After-spike recovery"},
+    {id:"izh_I",label:"I (input current)",min:0,max:20,step:0.5,val:10,desc:"Input current"},
+    {id:"izh_dur",label:"Duration (ms)",min:50,max:500,step:25,val:200,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"v",d:"Membrane potential (mV)"},
+    {n:"u",d:"Recovery variable"},
+    {n:"a",d:"Recovery time scale"},
+    {n:"b",d:"Coupling sensitivity"},
+    {n:"c",d:"Post-spike reset voltage"},
+    {n:"d",d:"Post-spike recovery boost"},
+    {n:"I",d:"External input current"},
+  ],
+  run:function(p){
+    const dt=0.5,T=p.izh_dur;
+    let v=-65,u=p.izh_b*v;
+    const a=p.izh_a,b=p.izh_b,c=p.izh_c,d=p.izh_d,I=p.izh_I;
+    const ts=[],Vs=[],Us=[],spikes=[];
+    for(let t=0;t<T;t+=dt){
+      if(v>=30){spikes.push(t);v=c;u=u+d;}
+      v+=dt*(0.04*v*v+5*v+140-u+I);
+      u+=dt*(a*(b*v-u));
+      v=Math.min(v,30);
+      ts.push(parseFloat(t.toFixed(1)));
+      Vs.push(parseFloat(v.toFixed(2)));
+      Us.push(parseFloat(u.toFixed(2)));
+    }
+    const fr=spikes.length>0?(spikes.length/(T/1000)).toFixed(1):'0';
+    return{ts,series:[
+      {label:'v (mV)',data:Vs,color:'#4f8ef7'},
+      {label:'u (recovery)',data:Us,color:'#c084fc'},
+    ],metrics:[
+      {label:"Spikes",val:spikes.length,cls:"green"},
+      {label:"Fire rate (Hz)",val:fr,cls:"blue"},
+      {label:"Peak V",val:30,cls:"red"},
+      {label:"Final u",val:Us[Us.length-1],cls:"purple"},
+    ],phase:{x:Vs,y:Us,xlabel:"v (mV)",ylabel:"u (recovery)"}};
+  }
+},
+
+/* ============ 03 FITZHUGH-NAGUMO ============ */
+fhn: {
+  title:"FitzHugh-Nagumo",tag:"tag-neuron",tagLabel:"Single Neuron",
+  desc:"A 2D reduction of the Hodgkin-Huxley model capturing the essential excitability and oscillation of neurons. Widely used for phase-plane analysis and bifurcation studies.",
+  equations:`<span class="eq-label">FitzHugh-Nagumo equations</span>
+dv/dt = <span class="eq-var">v</span> - v³/<span class="eq-num">3</span> - <span class="eq-var">w</span> + <span class="eq-var">I_ext</span>
+dw/dt = (<span class="eq-var">v</span> + <span class="eq-var">a</span> - <span class="eq-var">b</span>·<span class="eq-var">w</span>) / <span class="eq-var">τ</span>
+
+<span class="eq-label">Nullclines (phase-plane analysis)</span>
+v-nullcline: w = v - v³/3 + I_ext   <span class="eq-comment">(cubic)</span>
+w-nullcline: w = (v + a) / b         <span class="eq-comment">(linear)</span>`,
+  params:[
+    {id:"fhn_a",label:"a (threshold)",min:0.3,max:1.2,step:0.05,val:0.7,desc:"Threshold parameter"},
+    {id:"fhn_b",label:"b (recovery)",min:0.5,max:1.5,step:0.05,val:0.8,desc:"Recovery slope"},
+    {id:"fhn_tau",label:"τ (timescale)",min:5,max:30,step:1,val:12.5,desc:"Recovery timescale"},
+    {id:"fhn_I",label:"I_ext",min:0,max:1.5,step:0.05,val:0.5,desc:"External input"},
+    {id:"fhn_dur",label:"Duration",min:50,max:300,step:10,val:150,desc:"Sim steps × dt"},
+  ],
+  paramDescs:[
+    {n:"v",d:"Membrane variable (fast)"},
+    {n:"w",d:"Recovery variable (slow)"},
+    {n:"a",d:"Threshold offset"},
+    {n:"b",d:"Recovery coupling"},
+    {n:"τ",d:"Timescale ratio"},
+    {n:"I_ext",d:"External stimulus"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.fhn_dur;
+    const a=p.fhn_a,b=p.fhn_b,tau=p.fhn_tau,I=p.fhn_I;
+    let v=-1.2,w=-0.6;
+    const ts=[],Vs=[],Ws=[];
+    for(let t=0;t<T;t+=dt){
+      const dv=v-v*v*v/3-w+I;
+      const dw=(v+a-b*w)/tau;
+      v+=dt*dv;w+=dt*dw;
+      ts.push(parseFloat(t.toFixed(1)));
+      Vs.push(parseFloat(v.toFixed(3)));
+      Ws.push(parseFloat(w.toFixed(3)));
+    }
+    const vmax=Math.max(...Vs).toFixed(3);
+    const spikes=Vs.filter((v,i)=>i>0&&i<Vs.length-1&&Vs[i]>0.8&&Vs[i]>Vs[i-1]&&Vs[i]>Vs[i+1]).length;
+    return{ts,series:[
+      {label:'v (membrane)',data:Vs,color:'#4f8ef7'},
+      {label:'w (recovery)',data:Ws,color:'#f5a623'},
+    ],metrics:[
+      {label:"Peak v",val:vmax,cls:"green"},
+      {label:"Final v",val:Vs[Vs.length-1],cls:"blue"},
+      {label:"Final w",val:Ws[Ws.length-1],cls:""},
+      {label:"Est spikes",val:spikes,cls:"red"},
+    ],phase:{x:Vs,y:Ws,xlabel:"v (membrane)",ylabel:"w (recovery)"}};
+  }
+},
+
+/* ============ 04 LIF ============ */
+lif: {
+  title:"Leaky Integrate-and-Fire",tag:"tag-neuron",tagLabel:"Single Neuron",
+  desc:"The simplest and most widely used spiking neuron model. Integrates input current with RC membrane dynamics, fires when threshold is reached, and resets. Analytically tractable.",
+  equations:`<span class="eq-label">Subthreshold dynamics</span>
+<span class="eq-var">τ_m</span> · dV/dt = -(<span class="eq-var">V</span> - <span class="eq-var">V_rest</span>) + <span class="eq-var">R_m</span>·<span class="eq-var">I(t)</span>
+
+<span class="eq-label">Spike and reset rule</span>
+if V ≥ <span class="eq-var">V_th</span>:  emit spike, V ← <span class="eq-var">V_reset</span>
+Apply refractory period <span class="eq-var">t_ref</span> after each spike
+
+<span class="eq-label">Analytic firing rate (constant I)</span>
+f = 1 / (<span class="eq-var">τ_m</span> · ln[(R_m·I - V_reset)/(R_m·I - V_th)])`,
+  params:[
+    {id:"lif_I",label:"I_input (nA)",min:0,max:5,step:0.1,val:1.5,desc:"Input current"},
+    {id:"lif_tau",label:"τ_m (ms)",min:5,max:50,step:1,val:20,desc:"Membrane time constant"},
+    {id:"lif_R",label:"R_m (MΩ)",min:1,max:100,step:1,val:10,desc:"Membrane resistance"},
+    {id:"lif_vth",label:"V_th (mV)",min:-60,max:-40,step:1,val:-55,desc:"Spike threshold"},
+    {id:"lif_vrest",label:"V_rest (mV)",min:-80,max:-60,step:1,val:-70,desc:"Resting potential"},
+    {id:"lif_dur",label:"Duration (ms)",min:50,max:500,step:25,val:200,desc:"Simulation duration"},
+  ],
+  paramDescs:[
+    {n:"V",d:"Membrane potential (mV)"},
+    {n:"τ_m",d:"Membrane time constant"},
+    {n:"R_m",d:"Membrane resistance"},
+    {n:"V_th",d:"Firing threshold"},
+    {n:"V_reset",d:"Post-spike reset voltage"},
+    {n:"t_ref",d:"Refractory period (ms)"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.lif_dur,tau=p.lif_tau,Rm=p.lif_R,I=p.lif_I,Vth=p.lif_vth,Vr=p.lif_vrest,Vreset=Vr;
+    const tref=2;let V=Vr,ref=0;
+    const ts=[],Vs=[],spikes=[];
+    for(let t=0;t<T;t+=dt){
+      if(ref>0){ref-=dt;V=Vreset;}
+      else{V+=dt/tau*(-( V-Vr)+Rm*I);}
+      if(V>=Vth){spikes.push(t);V=40;ref=tref;}
+      ts.push(parseFloat(t.toFixed(1)));
+      Vs.push(parseFloat(V.toFixed(2)));
+    }
+    const fr=spikes.length>0?(spikes.length/(T/1000)).toFixed(1):'0';
+    const analytic=()=>{const x=Rm*I;if(x<=Vth-Vr)return'subthreshold';return(1000/(tau*Math.log((x-(Vreset-Vr))/(x-(Vth-Vr))))).toFixed(1)};
+    return{ts,series:[{label:'V (mV)',data:Vs,color:'#00d4aa'}],
+      metrics:[
+        {label:"Spike count",val:spikes.length,cls:"green"},
+        {label:"Sim rate (Hz)",val:fr,cls:"blue"},
+        {label:"Analytic f (Hz)",val:analytic(),cls:"purple"},
+        {label:"V threshold",val:Vth,cls:"red"},
+      ],phase:null};
+  }
+},
+
+/* ============ 05 ADEX ============ */
+adex: {
+  title:"Adaptive Exponential IF",tag:"tag-neuron",tagLabel:"Single Neuron",
+  desc:"The AdEx model adds an exponential spike-generating current and an adaptation current to LIF. Reproduces spike-frequency adaptation, regular spiking, bursting, and irregular firing.",
+  equations:`<span class="eq-label">Voltage equation</span>
+<span class="eq-var">C</span>·dV/dt = -<span class="eq-var">g_L</span>(V-<span class="eq-var">E_L</span>) + <span class="eq-var">g_L</span>·<span class="eq-var">Δ_T</span>·exp((V-<span class="eq-var">V_T</span>)/<span class="eq-var">Δ_T</span>) - <span class="eq-var">w</span> + <span class="eq-var">I</span>
+
+<span class="eq-label">Adaptation current</span>
+<span class="eq-var">τ_w</span>·dw/dt = <span class="eq-var">a</span>·(V-<span class="eq-var">E_L</span>) - <span class="eq-var">w</span>
+
+<span class="eq-label">Spike and reset</span>
+if V ≥ <span class="eq-var">V_peak</span>:  V ← <span class="eq-var">V_r</span>,  w ← w + <span class="eq-var">b</span>`,
+  params:[
+    {id:"adex_I",label:"I (pA)",min:0,max:1000,step:10,val:500,desc:"Input current"},
+    {id:"adex_a",label:"a (subth adapt)",min:0,max:10,step:0.5,val:2,desc:"Subthreshold adaptation"},
+    {id:"adex_b",label:"b (spike adapt)",min:0,max:200,step:5,val:100,desc:"Spike-triggered adapt"},
+    {id:"adex_DT",label:"Δ_T (sharpness)",min:0.5,max:5,step:0.1,val:2,desc:"Spike sharpness"},
+    {id:"adex_tauw",label:"τ_w (ms)",min:50,max:500,step:25,val:100,desc:"Adaptation timescale"},
+    {id:"adex_dur",label:"Duration (ms)",min:100,max:600,step:50,val:300,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"V",d:"Membrane potential"},
+    {n:"w",d:"Adaptation current (pA)"},
+    {n:"a",d:"Subthreshold adaptation"},
+    {n:"b",d:"Spike-triggered adaptation"},
+    {n:"Δ_T",d:"Spike slope factor"},
+    {n:"τ_w",d:"Adaptation time constant"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.adex_dur;
+    const C=281,gL=30,EL=-70.6,VT=-50.4,DT=p.adex_DT,tauw=p.adex_tauw;
+    const a=p.adex_a,b=p.adex_b,I=p.adex_I,Vr=-70.6,Vpeak=20;
+    let V=EL,w=0;
+    const ts=[],Vs=[],Ws=[],spikes=[];
+    for(let t=0;t<T;t+=dt){
+      const expTerm=gL*DT*Math.min(Math.exp((V-VT)/DT),1e6);
+      const dV=(-gL*(V-EL)+expTerm-w+I)/C;
+      const dw=(a*(V-EL)-w)/tauw;
+      V+=dt*dV;w+=dt*dw;
+      if(V>=Vpeak){spikes.push(t);V=Vr;w=w+b;}
+      ts.push(parseFloat(t.toFixed(1)));
+      Vs.push(parseFloat(Math.min(V,Vpeak).toFixed(2)));
+      Ws.push(parseFloat(w.toFixed(2)));
+    }
+    const fr=spikes.length>0?(spikes.length/(T/1000)).toFixed(1):'0';
+    return{ts,series:[
+      {label:'V (mV)',data:Vs,color:'#4f8ef7'},
+      {label:'w (pA)',data:Ws.map(x=>x/10-70),color:'#f5a623'},
+    ],metrics:[
+      {label:"Spikes",val:spikes.length,cls:"green"},
+      {label:"Fire rate (Hz)",val:fr,cls:"blue"},
+      {label:"Final w (pA)",val:Ws[Ws.length-1].toFixed(0),cls:"purple"},
+    ],phase:{x:Vs,y:Ws,xlabel:"V (mV)",ylabel:"w (pA)"}};
+  }
+},
+
+/* ============ 06 MORRIS-LECAR ============ */
+morrislecar: {
+  title:"Morris-Lecar Model",tag:"tag-neuron",tagLabel:"Single Neuron",
+  desc:"A 2D conductance-based model derived from barnacle giant muscle fiber. Contains voltage-gated Ca²⁺ and K⁺ channels. Famous for demonstrating class I and class II excitability via bifurcation analysis.",
+  equations:`<span class="eq-label">Voltage equation</span>
+<span class="eq-var">C</span>·dV/dt = <span class="eq-var">I_ext</span> - <span class="eq-var">g_Ca</span>·m_∞(V)·(V-<span class="eq-var">V_Ca</span>) - <span class="eq-var">g_K</span>·w·(V-<span class="eq-var">V_K</span>) - <span class="eq-var">g_L</span>·(V-<span class="eq-var">V_L</span>)
+
+<span class="eq-label">Recovery variable</span>
+dw/dt = φ·(w_∞(V) - w) / τ_w(V)
+
+<span class="eq-label">Steady-state functions</span>
+m_∞(V) = 0.5·(1 + tanh((V - V₁)/V₂))
+w_∞(V) = 0.5·(1 + tanh((V - V₃)/V₄))
+τ_w(V) = 1 / cosh((V - V₃)/(2·V₄))`,
+  params:[
+    {id:"ml_I",label:"I_ext (μA/cm²)",min:0,max:200,step:5,val:90,desc:"Applied current"},
+    {id:"ml_gca",label:"g_Ca",min:1,max:10,step:0.5,val:4,desc:"Ca conductance"},
+    {id:"ml_gk",label:"g_K",min:4,max:16,step:0.5,val:8,desc:"K conductance"},
+    {id:"ml_phi",label:"φ (rate)",min:0.01,max:0.1,step:0.005,val:0.04,desc:"Rate scaling factor"},
+    {id:"ml_dur",label:"Duration (ms)",min:50,max:500,step:25,val:200,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"V",d:"Membrane potential (mV)"},
+    {n:"w",d:"K activation variable"},
+    {n:"m_∞",d:"Ca steady-state activation"},
+    {n:"φ",d:"Temperature rate factor"},
+    {n:"V_Ca",d:"Ca reversal potential"},
+    {n:"V_K",d:"K reversal potential"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.ml_dur;
+    const C=20,gCa=p.ml_gca,gK=p.ml_gk,gL=2,phi=p.ml_phi,I=p.ml_I;
+    const VCa=120,VK=-84,VL=-60,V1=-1.2,V2=18,V3=2,V4=30;
+    const minf=v=>0.5*(1+Math.tanh((v-V1)/V2));
+    const winf=v=>0.5*(1+Math.tanh((v-V3)/V4));
+    const tauw=v=>1/Math.cosh((v-V3)/(2*V4));
+    let V=-60,w=0.014;
+    const ts=[],Vs=[],Ws=[];
+    for(let t=0;t<T;t+=dt){
+      const ICa=gCa*minf(V)*(V-VCa),IK=gK*w*(V-VK),IL=gL*(V-VL);
+      const dV=(I-ICa-IK-IL)/C;
+      const dw=phi*(winf(V)-w)/tauw(V);
+      V+=dt*dV;w+=dt*dw;
+      w=Math.max(0,Math.min(1,w));
+      ts.push(parseFloat(t.toFixed(1)));
+      Vs.push(parseFloat(V.toFixed(2)));
+      Ws.push(parseFloat(w.toFixed(4)));
+    }
+    return{ts,series:[
+      {label:'V (mV)',data:Vs,color:'#4f8ef7'},
+      {label:'w (K act)',data:Ws.map(x=>x*100-80),color:'#00d4aa'},
+    ],metrics:[
+      {label:"Peak V (mV)",val:Math.max(...Vs).toFixed(1),cls:"red"},
+      {label:"Final V (mV)",val:Vs[Vs.length-1].toFixed(1),cls:"blue"},
+      {label:"Final w",val:Ws[Ws.length-1].toFixed(3),cls:"green"},
+    ],phase:{x:Vs,y:Ws,xlabel:"V (mV)",ylabel:"w (K act)"}};
+  }
+},
+
+/* ============ 07 HINDMARSH-ROSE ============ */
+hindmarshrose: {
+  title:"Hindmarsh-Rose Model",tag:"tag-neuron",tagLabel:"Single Neuron",
+  desc:"A 3D phenomenological model of neuronal bursting. Exhibits regular spiking, bursting, and chaotic firing. The slow adaptation variable z is key to burst generation.",
+  equations:`<span class="eq-label">Three-dimensional ODE system</span>
+dx/dt = <span class="eq-var">y</span> - <span class="eq-var">a</span>·x³ + <span class="eq-var">b</span>·x² - <span class="eq-var">z</span> + <span class="eq-var">I</span>
+dy/dt = <span class="eq-var">c</span> - <span class="eq-var">d</span>·x² - <span class="eq-var">y</span>
+dz/dt = <span class="eq-var">r</span>·[<span class="eq-var">s</span>·(x - <span class="eq-var">x_R</span>) - <span class="eq-var">z</span>]
+
+<span class="eq-label">Parameter regimes</span>
+<span class="eq-comment">Regular spiking: r=0.001, I=2</span>
+<span class="eq-comment">Bursting:        r=0.001, I=3</span>
+<span class="eq-comment">Chaotic:         r=0.001, I=3.3, s=4</span>`,
+  params:[
+    {id:"hr_I",label:"I (input)",min:0,max:5,step:0.1,val:3.0,desc:"External current"},
+    {id:"hr_r",label:"r (slow var)",min:0.0005,max:0.01,step:0.0005,val:0.001,desc:"Slow variable rate"},
+    {id:"hr_s",label:"s (z coupling)",min:1,max:8,step:0.25,val:4,desc:"z-x coupling strength"},
+    {id:"hr_xR",label:"x_R (eq. point)",min:-2,max:0,step:0.1,val:-1.6,desc:"Resting x equilibrium"},
+    {id:"hr_dur",label:"Duration",min:500,max:3000,step:100,val:1500,desc:"Integration steps"},
+  ],
+  paramDescs:[
+    {n:"x",d:"Membrane potential (a.u.)"},
+    {n:"y",d:"Fast recovery variable"},
+    {n:"z",d:"Slow adaptation current"},
+    {n:"r",d:"Adaptation timescale"},
+    {n:"s",d:"z-x coupling"},
+    {n:"x_R",d:"Equilibrium resting point"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.hr_dur;
+    const a=1,b=3,c=1,d=5,I=p.hr_I,r=p.hr_r,s=p.hr_s,xR=p.hr_xR;
+    let x=-1.3,y=-7.8,z=3.5;
+    const ts=[],Xs=[],Ys=[],Zs=[];
+    for(let t=0;t<T;t+=dt){
+      const dx=y-a*x*x*x+b*x*x-z+I;
+      const dy=c-d*x*x-y;
+      const dz=r*(s*(x-xR)-z);
+      x+=dt*dx;y+=dt*dy;z+=dt*dz;
+      if(t%2<dt){
+        ts.push(parseFloat(t.toFixed(1)));
+        Xs.push(parseFloat(x.toFixed(3)));
+        Ys.push(parseFloat(y.toFixed(3)));
+        Zs.push(parseFloat(z.toFixed(3)));
+      }
+    }
+    const bursts=Xs.filter((v,i)=>i>0&&i<Xs.length-1&&Xs[i]>1&&Xs[i]>Xs[i-1]&&Xs[i]>Xs[i+1]).length;
+    return{ts,series:[
+      {label:'x (voltage)',data:Xs,color:'#4f8ef7'},
+      {label:'y (recovery)',data:Ys.map(v=>v/10),color:'#f5a623'},
+      {label:'z (adaptation)',data:Zs,color:'#c084fc'},
+    ],metrics:[
+      {label:"Est bursts",val:bursts,cls:"green"},
+      {label:"Peak x",val:Math.max(...Xs).toFixed(2),cls:"red"},
+      {label:"Final z",val:Zs[Zs.length-1].toFixed(3),cls:"purple"},
+    ],phase:{x:Xs,y:Zs,xlabel:"x (membrane)",ylabel:"z (adaptation)"}};
+  }
+},
+
+/* ============ 08 EPILEPTOR ============ */
+epileptor: {
+  title:"Epileptor Model (Jirsa 2014)",tag:"tag-epilepsy",tagLabel:"Epilepsy",
+  desc:"The canonical model of seizure dynamics from Jirsa et al. (2014, Brain). Reproduces the full clinical temporal dynamics of focal seizures: pre-ictal, ictal (onset/sustained/offset), and post-ictal states. Used in The Virtual Brain platform.",
+  equations:`<span class="eq-label">5-dimensional Epileptor system</span>
+dx₁/dt = <span class="eq-var">y₁</span> - f₁(x₁,x₂) - <span class="eq-var">z</span> + <span class="eq-var">I_ext1</span>
+dy₁/dt = <span class="eq-var">y₀</span> - <span class="eq-num">5</span>x₁² - <span class="eq-var">y₁</span>
+dz/dt  = (<span class="eq-num">1</span>/<span class="eq-var">τ₀</span>)·(<span class="eq-num">4</span>(x₁-<span class="eq-var">x₀</span>) - <span class="eq-var">z</span>)
+
+dx₂/dt = -<span class="eq-var">y₂</span> + x₂ - x₂³ + <span class="eq-var">I_ext2</span> + <span class="eq-num">2</span>g(x₁) - <span class="eq-num">0.3</span>(z-<span class="eq-num">3.5</span>)
+dy₂/dt = (<span class="eq-num">1</span>/<span class="eq-var">τ₂</span>)·(-<span class="eq-var">y₂</span> + f₂(x₂))
+
+<span class="eq-label">Nonlinear functions</span>
+f₁(x₁,x₂) = x₁³ - <span class="eq-num">3</span>x₁² if x₁ &lt; <span class="eq-num">0</span>, else (x₂ - <span class="eq-num">0.6</span>(z-<span class="eq-num">4</span>)²)·x₁
+f₂(x₂)    = <span class="eq-num">0</span> if x₂ &lt; -<span class="eq-num">0.25</span>, else a₂·(x₂+<span class="eq-num">0.25</span>)
+g(x₁)     = ∫ exp(λ(x₁-x')) dx'  <span class="eq-comment">(coupling)</span>`,
+  params:[
+    {id:"ep_x0",label:"x₀ (excitability)",min:-3,max:-1,step:0.05,val:-1.6,desc:"Seizure threshold. x₀ > -2.05: seizure"},
+    {id:"ep_y0",label:"y₀ (offset)",min:0,max:2,step:0.05,val:1,desc:"y₁ offset driving slow pop"},
+    {id:"ep_tau0",label:"τ₀ (permittivity)",min:1000,max:5000,step:100,val:2857,desc:"Permittivity timescale"},
+    {id:"ep_tau2",label:"τ₂ (fast osc)",min:5,max:20,step:1,val:10,desc:"Fast oscillation τ"},
+    {id:"ep_Iext1",label:"I_ext1",min:1,max:5,step:0.1,val:3.1,desc:"External input to pop 1"},
+    {id:"ep_Iext2",label:"I_ext2",min:0,max:1,step:0.05,val:0.45,desc:"External input to pop 2"},
+    {id:"ep_dur",label:"Duration (a.u.)",min:2000,max:8000,step:500,val:4000,desc:"Simulation length"},
+  ],
+  paramDescs:[
+    {n:"x₁",d:"Amplitude of fast oscillations"},
+    {n:"y₁",d:"Input to fast oscillations"},
+    {n:"z",d:"Permittivity (slow, controls seizure)"},
+    {n:"x₂",d:"Amplitude of slow oscillations"},
+    {n:"y₂",d:"Input to slow oscillations"},
+    {n:"x₀",d:"Epileptogenicity (threshold)"},
+    {n:"τ₀",d:"Permittivity timescale (>1000)"},
+    {n:"I_ext",d:"External driving input"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.ep_dur;
+    const x0=p.ep_x0,y0=p.ep_y0,tau0=p.ep_tau0,tau2=p.ep_tau2,Iext1=p.ep_Iext1,Iext2=p.ep_Iext2;
+    let x1=0,y1=-5,z=3,x2=0,y2=0;
+    let gint=0;
+    const ts=[],X1=[],Zs=[],X2=[],LFP=[];
+    const a2=0.1,lambda=1;
+    const f1=(x1,x2,z)=>x1<0?x1*x1*x1-3*x1*x1:(x2-0.6*(z-4)*(z-4))*x1;
+    const f2=x2=>x2<-0.25?0:a2*(x2+0.25);
+    const skip=5;
+    for(let i=0;i<T;i++){
+      gint+= dt*(Math.exp(lambda*x1)*dt);
+      gint*=0.999;
+      const dx1=y1-f1(x1,x2,z)-z+Iext1;
+      const dy1=y0-5*x1*x1-y1;
+      const dz=(1/tau0)*(4*(x1-x0)-z);
+      const dx2=-y2+x2-x2*x2*x2+Iext2+2*gint-0.3*(z-3.5);
+      const dy2=(1/tau2)*(-y2+f2(x2));
+      x1+=dt*dx1;y1+=dt*dy1;z+=dt*dz;
+      x2+=dt*dx2;y2+=dt*dy2;
+      if(i%skip===0){
+        ts.push(parseFloat((i*dt).toFixed(1)));
+        X1.push(parseFloat(x1.toFixed(3)));
+        Zs.push(parseFloat(z.toFixed(3)));
+        X2.push(parseFloat(x2.toFixed(3)));
+        LFP.push(parseFloat((-x1+0.5*x2).toFixed(3)));
+      }
+    }
+    const ictal=LFP.filter(v=>v<-0.5).length/(LFP.length)*100;
+    return{ts,series:[
+      {label:'x₁ (fast pop)',data:X1,color:'#f76b4f'},
+      {label:'z (permittivity)',data:Zs,color:'#4f8ef7'},
+      {label:'x₂ (slow pop)',data:X2,color:'#c084fc'},
+      {label:'LFP proxy',data:LFP,color:'#00d4aa'},
+    ],metrics:[
+      {label:"Ictal % time",val:ictal.toFixed(1)+"%",cls:"red"},
+      {label:"Peak x₁",val:Math.max(...X1).toFixed(2),cls:"green"},
+      {label:"z range",val:(Math.max(...Zs)-Math.min(...Zs)).toFixed(2),cls:"blue"},
+    ],phase:{x:X1,y:Zs,xlabel:"x₁ (fast oscillation)",ylabel:"z (permittivity)"}};
+  }
+},
+
+/* ============ 09 EPILEPTOR 2D ============ */
+epileptor2d: {
+  title:"Epileptor 2D (Reduced)",tag:"tag-epilepsy",tagLabel:"Epilepsy",
+  desc:"A 2D reduction of the full Epileptor capturing the slow seizure envelope dynamics. Used for large-scale network simulations and parameter fitting to patient EEG/SEEG recordings.",
+  equations:`<span class="eq-label">Reduced 2D Epileptor</span>
+dx/dt = -<span class="eq-var">y</span> + <span class="eq-var">η</span>(x) + <span class="eq-var">I_ext</span>
+dy/dt = (<span class="eq-num">1</span>/<span class="eq-var">τ</span>)·(x₀ + 2.5 - y - <span class="eq-var">β</span>)
+
+<span class="eq-label">Sigmoidal coupling function</span>
+η(x) = 1/(1 + exp(-<span class="eq-var">d</span>·(x - <span class="eq-var">x_th</span>)))
+
+<span class="eq-label">Seizure states</span>
+<span class="eq-comment">Interictal: x ≈ -2,  Ictal: x ≈ +1</span>
+<span class="eq-comment">Onset/offset controlled by y (slow var)</span>`,
+  params:[
+    {id:"e2_x0",label:"x₀ (threshold)",min:-3,max:-0.5,step:0.05,val:-1.6,desc:"Epileptogenicity"},
+    {id:"e2_tau",label:"τ (slow scale)",min:100,max:2000,step:50,val:600,desc:"Slow variable timescale"},
+    {id:"e2_I",label:"I_ext",min:0,max:2,step:0.05,val:0.5,desc:"External input"},
+    {id:"e2_dur",label:"Duration",min:1000,max:6000,step:500,val:3000,desc:"Integration steps"},
+  ],
+  paramDescs:[
+    {n:"x",d:"Seizure activity envelope"},
+    {n:"y",d:"Slow permittivity variable"},
+    {n:"x₀",d:"Epileptogenicity parameter"},
+    {n:"τ",d:"Slow timescale (permittivity)"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.e2_dur,x0=p.e2_x0,tau=p.e2_tau,I=p.e2_I;
+    let x=-2,y=2.5;
+    const ts=[],Xs=[],Ys=[];
+    const eta=x=>1/(1+Math.exp(-6*(x+0.5)));
+    const skip=5;
+    for(let i=0;i<T;i++){
+      const dx=-y+eta(x)+I;
+      const dy=(1/tau)*(x0+2.5-y);
+      x+=dt*dx;y+=dt*dy;
+      if(i%skip===0){ts.push((i*dt/10).toFixed(1));Xs.push(parseFloat(x.toFixed(3)));Ys.push(parseFloat(y.toFixed(3)));}
+    }
+    const ictal=Xs.filter(v=>v>0).length/Xs.length*100;
+    return{ts,series:[
+      {label:'x (activity)',data:Xs,color:'#f76b4f'},
+      {label:'y (permittivity)',data:Ys,color:'#4f8ef7'},
+    ],metrics:[
+      {label:"Ictal % time",val:ictal.toFixed(1)+"%",cls:"red"},
+      {label:"Peak x",val:Math.max(...Xs).toFixed(2),cls:"green"},
+      {label:"Final y",val:Ys[Ys.length-1].toFixed(3),cls:"blue"},
+    ],phase:{x:Xs,y:Ys,xlabel:"x (activity)",ylabel:"y (permittivity)"}};
+  }
+},
+
+/* ============ 10 WENDLING CORTICAL ============ */
+wendling: {
+  title:"Wendling Cortical Model",tag:"tag-epilepsy",tagLabel:"Epilepsy",
+  desc:"A neural mass model of hippocampal cortex (Wendling et al. 2002) with excitatory pyramidal cells, fast and slow inhibitory interneurons. Generates EEG signatures across normal, pre-ictal, and ictal states by varying excitation/inhibition balance.",
+  equations:`<span class="eq-label">Neural mass equations (convolution approach)</span>
+y₀(t) = A·a · ∫ S(y₁-y₂-y₃) · h_e(t-τ) dτ   <span class="eq-comment">(pyramidal output)</span>
+y₁(t) = A·a · ∫ p(t) · h_e(t-τ) dτ            <span class="eq-comment">(exc input)</span>
+y₂(t) = B·b · ∫ C₂·S(C₁·y₀) · h_i(t-τ) dτ   <span class="eq-comment">(slow inhib)</span>
+y₃(t) = G·g · ∫ C₄·S(C₃·y₀) · h_i(t-τ) dτ   <span class="eq-comment">(fast inhib)</span>
+
+<span class="eq-label">Sigmoid transfer function</span>
+S(v) = 2e₀ / (1 + exp(r·(v₀ - v)))
+
+<span class="eq-label">State form (2nd order ODE → 1st order system)</span>
+ÿₖ = A·a·(S(·)) - 2a·ẏₖ - a²·yₖ`,
+  params:[
+    {id:"wend_A",label:"A (exc amp)",min:1,max:10,step:0.25,val:3.25,desc:"Excit post-syn amp (mV)"},
+    {id:"wend_B",label:"B (slow inh)",min:10,max:60,step:1,val:22,desc:"Slow inhib post-syn amp"},
+    {id:"wend_G",label:"G (fast inh)",min:5,max:40,step:1,val:20,desc:"Fast inhib post-syn amp"},
+    {id:"wend_C",label:"C (connectivity)",min:50,max:500,step:10,val:135,desc:"Global connectivity param"},
+    {id:"wend_p",label:"p (mean input)",min:50,max:500,step:10,val:220,desc:"Mean firing rate input"},
+    {id:"wend_dur",label:"Duration (ms)",min:500,max:3000,step:100,val:1500,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"A",d:"Excitatory amplitude (mV)"},
+    {n:"B",d:"Slow inhibitory amplitude"},
+    {n:"G",d:"Fast inhibitory amplitude"},
+    {n:"C",d:"Average number of synaptic contacts"},
+    {n:"a,b,g",d:"Inverse time constants"},
+    {n:"p(t)",d:"Gaussian noise input"},
+  ],
+  run:function(p){
+    const dt=0.001,T=p.wend_dur/1000;
+    const A=p.wend_A,B=p.wend_B,G=p.wend_G,C=p.wend_C,pmean=p.wend_p;
+    const a=100,b=50,g=500;
+    const C1=1*C,C2=0.8*C,C3=0.25*C,C4=0.25*C;
+    const e0=2.5,v0=6,r=0.56;
+    const S=v=>2*e0/(1+Math.exp(r*(v0-v)));
+    let y0=0,y1=0,y2=0,y3=0,y4=0,y5=0,y6=0,y7=0,y8=0,y9=0,y10=0,y11=0;
+    const ts=[],LFP=[],skip=5,steps=Math.round(T/dt);
+    let idx=0;
+    for(let i=0;i<steps;i++){
+      const t=i*dt;
+      const noise=(Math.random()-0.5)*60+pmean;
+      const EEG=y1-y2-y3;
+      const dy1=y4,dy4=A*a*S(EEG)-2*a*y4-a*a*y1;
+      const dy0a=y5,dy5a=A*a*noise-2*a*y5-a*a*y0;
+      const dy2a=y6,dy6a=B*b*S(C1*y0)-2*b*y6-b*b*y2;
+      const dy3a=y7,dy7a=G*g*S(C3*EEG)-2*g*y7-g*g*y3;
+      y0+=dt*dy0a;y5+=dt*dy5a;
+      y1+=dt*dy1;y4+=dt*dy4;
+      y2+=dt*dy2a;y6+=dt*dy6a;
+      y3+=dt*dy3a;y7+=dt*dy7a;
+      if(i%skip===0){ts.push(parseFloat((t*1000).toFixed(1)));LFP.push(parseFloat(EEG.toFixed(4)));}
+    }
+    return{ts,series:[
+      {label:'EEG (y₁-y₂-y₃)',data:LFP,color:'#f76b4f'},
+    ],metrics:[
+      {label:"Peak amp (mV)",val:Math.max(...LFP.map(Math.abs)).toFixed(3),cls:"red"},
+      {label:"Mean LFP",val:(LFP.reduce((a,b)=>a+b,0)/LFP.length).toFixed(4),cls:"blue"},
+    ],phase:null};
+  }
+},
+
+/* ============ 11 JANSEN-RIT ============ */
+jansen: {
+  title:"Jansen-Rit Neural Mass",tag:"tag-epilepsy",tagLabel:"Epilepsy",
+  desc:"The Jansen-Rit model (1995) — a canonical neural mass model of cortical columns. Produces alpha oscillations, gamma activity, and seizure-like discharges. Input is treated as Gaussian noise representing thalamic drive.",
+  equations:`<span class="eq-label">Cortical column with 3 neural populations</span>
+ÿ₀ = A·a·S(y₁-y₂) - 2a·ẏ₀ - a²·y₀       <span class="eq-comment">(pyramidal)</span>
+ÿ₁ = A·a·(p+C₂·S(C₁·y₀)) - 2a·ẏ₁ - a²·y₁ <span class="eq-comment">(excitatory)</span>
+ÿ₂ = B·b·C₄·S(C₃·y₀) - 2b·ÿ₂ - b²·y₂     <span class="eq-comment">(inhibitory)</span>
+
+<span class="eq-label">Output EEG = y₁ - y₂  (difference of post-syn potentials)</span>
+S(v) = <span class="eq-num">2e₀</span> / (1 + exp(<span class="eq-var">r</span>·(<span class="eq-var">v₀</span> - v)))`,
+  params:[
+    {id:"jr_A",label:"A (exc syn gain)",min:1,max:10,step:0.25,val:3.25,desc:"Excit synaptic gain (mV)"},
+    {id:"jr_B",label:"B (inh syn gain)",min:10,max:60,step:1,val:22,desc:"Inhib synaptic gain (mV)"},
+    {id:"jr_a",label:"a (exc decay)",min:50,max:200,step:5,val:100,desc:"Exc time constant (s⁻¹)"},
+    {id:"jr_b",label:"b (inh decay)",min:25,max:100,step:5,val:50,desc:"Inhib time constant (s⁻¹)"},
+    {id:"jr_p",label:"p (thalamic input)",min:60,max:300,step:5,val:155,desc:"Mean thalamic input"},
+    {id:"jr_dur",label:"Duration (ms)",min:500,max:4000,step:250,val:2000,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"y₁-y₂",d:"Simulated EEG output"},
+    {n:"A,B",d:"Synaptic gain (max PSP amplitude)"},
+    {n:"a,b",d:"Inverse time constants (s⁻¹)"},
+    {n:"C1–C4",d:"Connectivity constants"},
+    {n:"p",d:"Thalamic/external input rate"},
+    {n:"S(v)",d:"Firing rate sigmoid"},
+  ],
+  run:function(p){
+    const dt=0.0001,T=p.jr_dur/1000,A=p.jr_A,B=p.jr_B,a=p.jr_a,b=p.jr_b,pmean=p.jr_p;
+    const C=135,C1=C,C2=0.8*C,C3=0.25*C,C4=0.25*C;
+    const e0=2.5,v0=6,r=0.56;
+    const S=v=>2*e0/(1+Math.exp(r*(v0-v)));
+    let y0=0,y1=0,y2=0,y3=0,y4=0,y5=0;
+    const ts=[],EEGs=[],steps=Math.round(T/dt),skip=50;
+    for(let i=0;i<steps;i++){
+      const t=i*dt;const noise=(Math.random()-0.5)*22+pmean;
+      const d0y0=y3,d3y0=A*a*S(y1-y2)-2*a*y3-a*a*y0;
+      const d0y1=y4,d4y1=A*a*(noise+C2*S(C1*y0))-2*a*y4-a*a*y1;
+      const d0y2=y5,d5y2=B*b*C4*S(C3*y0)-2*b*y5-b*b*y2;
+      y0+=dt*d0y0;y3+=dt*d3y0;
+      y1+=dt*d0y1;y4+=dt*d4y1;
+      y2+=dt*d0y2;y5+=dt*d5y2;
+      if(i%skip===0){ts.push(parseFloat((t*1000).toFixed(1)));EEGs.push(parseFloat((y1-y2).toFixed(4)));}
+    }
+    return{ts,series:[{label:'EEG (y₁-y₂, mV)',data:EEGs,color:'#4f8ef7'}],
+      metrics:[
+        {label:"Peak amp (mV)",val:Math.max(...EEGs.map(Math.abs)).toFixed(3),cls:"red"},
+        {label:"Mean (mV)",val:(EEGs.reduce((a,b)=>a+b,0)/EEGs.length).toFixed(4),cls:"blue"},
+      ],phase:null};
+  }
+},
+
+/* ============ 12 WILSON-COWAN ============ */
+wc: {
+  title:"Wilson-Cowan Model",tag:"tag-network",tagLabel:"Network",
+  desc:"The foundational model of excitatory-inhibitory (E-I) cortical population dynamics (1972). Produces quiescence, limit cycles (gamma oscillations), bistability, and winner-takes-all depending on connectivity parameters.",
+  equations:`<span class="eq-label">Population rate equations</span>
+<span class="eq-var">τ_E</span>·dE/dt = -E + (1-r_E·E)·S(<span class="eq-var">w_EE</span>·E - <span class="eq-var">w_EI</span>·I + <span class="eq-var">P</span>)
+<span class="eq-var">τ_I</span>·dI/dt = -I + (1-r_I·I)·S(<span class="eq-var">w_IE</span>·E - <span class="eq-var">w_II</span>·I + <span class="eq-var">Q</span>)
+
+<span class="eq-label">Sigmoid transfer function</span>
+S(x) = 1 / (1 + exp(-<span class="eq-var">a</span>·(x - <span class="eq-var">θ</span>)))
+
+<span class="eq-label">Fixed points satisfy dE/dt=0, dI/dt=0 simultaneously</span>`,
+  params:[
+    {id:"wc_wee",label:"w_EE (E→E)",min:0,max:30,step:0.5,val:12,desc:"E→E coupling weight"},
+    {id:"wc_wei",label:"w_EI (I→E)",min:0,max:30,step:0.5,val:4,desc:"I→E inhibitory weight"},
+    {id:"wc_wie",label:"w_IE (E→I)",min:0,max:30,step:0.5,val:13,desc:"E→I coupling weight"},
+    {id:"wc_wii",label:"w_II (I→I)",min:0,max:20,step:0.5,val:11,desc:"I→I self-inhibition"},
+    {id:"wc_P",label:"P (exc input)",min:0,max:5,step:0.1,val:1.25,desc:"Excitatory external drive"},
+    {id:"wc_Q",label:"Q (inh input)",min:0,max:5,step:0.1,val:0,desc:"Inhibitory external drive"},
+    {id:"wc_dur",label:"Duration",min:50,max:500,step:25,val:200,desc:"Time units"},
+  ],
+  paramDescs:[
+    {n:"E",d:"Excitatory population activity"},
+    {n:"I",d:"Inhibitory population activity"},
+    {n:"w_EE",d:"Excitatory recurrence"},
+    {n:"w_EI",d:"Inhibition of excitation"},
+    {n:"w_IE",d:"Excitation of inhibition"},
+    {n:"τ_E,τ_I",d:"Population time constants"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.wc_dur;
+    const wEE=p.wc_wee,wEI=p.wc_wei,wIE=p.wc_wie,wII=p.wc_wii,P=p.wc_P,Q=p.wc_Q;
+    const tE=1,tI=1,rE=1,rI=1,a=1.2,theta=4;
+    const S=x=>1/(1+Math.exp(-a*(x-theta)));
+    let E=0.1,I=0.05;
+    const ts=[],Es=[],Is=[];
+    for(let t=0;t<T;t+=dt){
+      const dE=(-E+(1-rE*E)*S(wEE*E-wEI*I+P))/tE;
+      const dI=(-I+(1-rI*I)*S(wIE*E-wII*I+Q))/tI;
+      E+=dt*dE;I+=dt*dI;
+      E=Math.max(0,Math.min(1,E));I=Math.max(0,Math.min(1,I));
+      ts.push(parseFloat(t.toFixed(1)));
+      Es.push(parseFloat(E.toFixed(4)));
+      Is.push(parseFloat(I.toFixed(4)));
+    }
+    return{ts,series:[
+      {label:'E (excitatory)',data:Es,color:'#f76b4f'},
+      {label:'I (inhibitory)',data:Is,color:'#4f8ef7'},
+    ],metrics:[
+      {label:"E steady state",val:Es[Es.length-1].toFixed(4),cls:"red"},
+      {label:"I steady state",val:Is[Is.length-1].toFixed(4),cls:"blue"},
+      {label:"E/I ratio",val:(Es[Es.length-1]/Math.max(Is[Is.length-1],0.0001)).toFixed(2),cls:"green"},
+    ],phase:{x:Es,y:Is,xlabel:"E (excitatory)",ylabel:"I (inhibitory)"}};
+  }
+},
+
+/* ============ 13 BRUNEL ============ */
+brunel: {
+  title:"Brunel Network",tag:"tag-network",tagLabel:"Network",
+  desc:"A large recurrent network of leaky integrate-and-fire neurons (Brunel 2000). Analytically characterizes four dynamical states: synchronous regular (SR), synchronous irregular (SI), asynchronous regular (AR), asynchronous irregular (AI).",
+  equations:`<span class="eq-label">Network LIF with recurrent connectivity</span>
+<span class="eq-var">τ_m</span>·dV/dt = -V + <span class="eq-var">μ</span> + <span class="eq-var">σ</span>·√τ_m · ξ(t)
+  <span class="eq-comment">where μ = τ_m·(J_E·ν_ext + (C_E·J_E - C_I·g·J_E)·ν) — mean input</span>
+  <span class="eq-comment">      σ = J_E·√(τ_m·(C_E·ν_ext + (C_E+g²·C_I)·ν)) — noise amp</span>
+
+<span class="eq-label">Self-consistency equation (mean-field)</span>
+ν = Φ(μ/σ, V_th/σ, V_reset/σ, τ_m, τ_ref)
+  <span class="eq-comment">Φ = Siegert formula for LIF rate</span>
+
+<span class="eq-label">Network regimes (g = inh/exc ratio)</span>
+<span class="eq-comment">g &lt; 1: SR | g ≈ 4: AI | g &gt; 6: SI</span>`,
+  params:[
+    {id:"brun_g",label:"g (inh/exc ratio)",min:1,max:8,step:0.1,val:4,desc:"Ratio of inhibitory to excitatory synaptic weight"},
+    {id:"brun_next",label:"ν_ext (Hz)",min:1,max:30,step:0.5,val:10,desc:"External Poisson input rate"},
+    {id:"brun_N",label:"N neurons",min:100,max:2000,step:50,val:500,desc:"Network size (for simulation)"},
+    {id:"brun_dur",label:"Duration (ms)",min:100,max:1000,step:50,val:500,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"g",d:"Inh/exc weight ratio"},
+    {n:"ν",d:"Self-consistent firing rate"},
+    {n:"C_E,C_I",d:"In-degree from E,I pop"},
+    {n:"J_E",d:"Excitatory synaptic weight"},
+    {n:"τ_m",d:"Membrane time constant"},
+    {n:"μ,σ",d:"Mean and SD of input current"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.brun_dur,g=p.brun_g,next=p.brun_next,N=Math.min(p.brun_N,600);
+    const tau=20,Vth=-50,Vr=-70,Vrest=-70,tref=2,JE=0.1,CE=Math.round(N*0.8*0.1),CI=Math.round(N*0.2*0.1);
+    let neurons=Array.from({length:N},()=>({V:Vrest+(Math.random()*10),ref:0}));
+    const ts=[],rates=[],steps=Math.round(T/dt);
+    for(let i=0;i<steps;i++){
+      let spikes=0;
+      const nu=rates.length>0?rates[rates.length-1]:next;
+      const mu=tau*(JE*next+(CE*JE-CI*g*JE)*nu/1000);
+      const sig=JE*Math.sqrt(tau*(CE*next+(CE+g*g*CI)*nu/1000));
+      neurons.forEach(n=>{
+        if(n.ref>0){n.ref-=dt;n.V=Vr;return;}
+        n.V+=dt/tau*(-( n.V-Vrest)+mu)+sig*Math.sqrt(dt)*((Math.random()+Math.random()+Math.random()-1.5));
+        if(n.V>=Vth){spikes++;n.V=40;n.ref=tref;}
+      });
+      if(i%10===0){ts.push(parseFloat((i*dt).toFixed(1)));rates.push(parseFloat((spikes/(N*dt/1000)).toFixed(2)));}
+    }
+    const meanRate=(rates.reduce((a,b)=>a+b,0)/rates.length).toFixed(1);
+    return{ts,series:[{label:'Population rate (Hz)',data:rates,color:'#00d4aa'}],
+      metrics:[
+        {label:"Mean rate (Hz)",val:meanRate,cls:"green"},
+        {label:"Peak rate (Hz)",val:Math.max(...rates).toFixed(1),cls:"red"},
+        {label:"N neurons",val:N,cls:"blue"},
+        {label:"g ratio",val:g,cls:""},
+      ],phase:null};
+  }
+},
+
+/* ============ 14 KURAMOTO ============ */
+kuramoto: {
+  title:"Kuramoto Oscillators",tag:"tag-network",tagLabel:"Network",
+  desc:"The Kuramoto model describes synchronization of coupled oscillators — a model for neural synchrony, gamma oscillations, and brain connectivity. The order parameter r measures global coherence (0=incoherent, 1=fully synchronized).",
+  equations:`<span class="eq-label">N coupled phase oscillators</span>
+dθᵢ/dt = ωᵢ + (<span class="eq-var">K</span>/N) · Σⱼ sin(θⱼ - θᵢ),  i=1,...,N
+
+<span class="eq-label">Order parameter (synchrony measure)</span>
+r·e^{iΨ} = (1/N) · Σⱼ e^{iθⱼ}
+  <span class="eq-comment">r=0: incoherent | r=1: fully synchronized</span>
+
+<span class="eq-label">Critical coupling (Lorentzian ω distribution)</span>
+K_c = 2 / (π · g(Ω))  where g(ω) is frequency PDF
+<span class="eq-comment">For σ=1 Lorentzian: K_c = 2</span>`,
+  params:[
+    {id:"kur_N",label:"N oscillators",min:20,max:200,step:10,val:80,desc:"Number of oscillators"},
+    {id:"kur_K",label:"K (coupling)",min:0,max:8,step:0.1,val:2.5,desc:"Coupling strength"},
+    {id:"kur_sigma",label:"σ (freq spread)",min:0.1,max:3,step:0.1,val:1.0,desc:"Frequency distribution width"},
+    {id:"kur_dur",label:"Duration",min:20,max:200,step:10,val:80,desc:"Simulation time units"},
+  ],
+  paramDescs:[
+    {n:"θᵢ",d:"Phase of oscillator i (rad)"},
+    {n:"ωᵢ",d:"Natural frequency of oscillator i"},
+    {n:"K",d:"Global coupling strength"},
+    {n:"r",d:"Order parameter [0,1]"},
+    {n:"Ψ",d:"Mean phase of the ensemble"},
+    {n:"K_c",d:"Critical coupling for sync"},
+  ],
+  run:function(p){
+    const dt=0.05,T=p.kur_dur,N=p.kur_N,K=p.kur_K,sigma=p.kur_sigma;
+    const omegas=Array.from({length:N},()=>sigma*Math.tan(Math.PI*(Math.random()-0.5)));
+    let thetas=Array.from({length:N},()=>Math.random()*2*Math.PI);
+    const ts=[],Rs=[];
+    for(let t=0;t<T;t+=dt){
+      const new_th=thetas.map((th,i)=>{
+        let sum=0;for(let j=0;j<N;j++)sum+=Math.sin(thetas[j]-th);
+        return th+dt*(omegas[i]+K/N*sum);
+      });
+      thetas=new_th;
+      const sumC=thetas.reduce((s,t)=>s+Math.cos(t),0);
+      const sumS=thetas.reduce((s,t)=>s+Math.sin(t),0);
+      const r=Math.sqrt(sumC*sumC+sumS*sumS)/N;
+      ts.push(parseFloat(t.toFixed(2)));
+      Rs.push(parseFloat(r.toFixed(4)));
+    }
+    const finalR=Rs[Rs.length-1];
+    return{ts,series:[{label:'r (order parameter)',data:Rs,color:'#c084fc'}],
+      metrics:[
+        {label:"Final r",val:finalR.toFixed(3),cls:finalR>0.5?"green":"red"},
+        {label:"K coupling",val:K,cls:"blue"},
+        {label:"K_c estimate",val:"2.0",cls:""},
+        {label:finalR>0.6?"Synchronized":"Incoherent",val:finalR>0.6?"✓":"✗",cls:finalR>0.6?"green":"red"},
+      ],phase:null};
+  }
+},
+
+/* ============ 15 STG ============ */
+stg: {
+  title:"STG Bursting Neuron",tag:"tag-network",tagLabel:"Network",
+  desc:"Stomatogastric ganglion (STG) model of a bursting pacemaker neuron. Contains persistent Na⁺, A-type K⁺, Ca²⁺, and Ca-dependent K⁺ currents. Generates robust rhythmic bursting underlying central pattern generators.",
+  equations:`<span class="eq-label">STG conductance-based model (simplified Prinz 2003)</span>
+C·dV/dt = -I_Na - I_CaT - I_KCa - I_Kd - I_A - I_H - I_L + I_ext
+
+<span class="eq-label">Key currents</span>
+I_Na  = g_Na · m³·h·(V-E_Na)       <span class="eq-comment">(fast Na⁺)</span>
+I_CaT = g_CaT · m²·h·(V-E_Ca)      <span class="eq-comment">(transient Ca²⁺)</span>
+I_KCa = g_KCa · m·([Ca]/(Kd+[Ca]))·(V-E_K)  <span class="eq-comment">(Ca-activated K⁺)</span>
+I_Kd  = g_Kd · m⁴·(V-E_K)          <span class="eq-comment">(delayed rectifier)</span>
+I_A   = g_A · m³·h·(V-E_K)         <span class="eq-comment">(A-type K⁺)</span>
+
+<span class="eq-label">Ca dynamics</span>
+d[Ca]/dt = -f·(I_CaT + I_CaS) / (2·F·d) - [Ca]/τ_Ca`,
+  params:[
+    {id:"stg_gna",label:"g_Na (mS/cm²)",min:100,max:2000,step:50,val:800,desc:"Fast Na conductance"},
+    {id:"stg_gcat",label:"g_CaT",min:0,max:20,step:0.5,val:5,desc:"T-type Ca conductance"},
+    {id:"stg_gkca",label:"g_KCa",min:0,max:200,step:5,val:60,desc:"Ca-activated K conductance"},
+    {id:"stg_gkd",label:"g_Kd",min:50,max:500,step:10,val:100,desc:"Delayed rectifier K"},
+    {id:"stg_Iext",label:"I_ext (nA/cm²)",min:0,max:5,step:0.1,val:0,desc:"External current"},
+    {id:"stg_dur",label:"Duration (ms)",min:500,max:3000,step:100,val:1500,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"V",d:"Membrane potential (mV)"},
+    {n:"[Ca]",d:"Intracellular Ca²⁺ (μM)"},
+    {n:"m,h",d:"Gating variables"},
+    {n:"g_X",d:"Max conductance density"},
+    {n:"τ_Ca",d:"Ca²⁺ removal time constant"},
+    {n:"E_Ca",d:"Ca reversal potential"},
+  ],
+  run:function(p){
+    const dt=0.02,T=p.stg_dur;
+    const gNa=p.stg_gna,gCaT=p.stg_gcat,gKCa=p.stg_gkca,gKd=p.stg_gkd,Iext=p.stg_Iext;
+    const ENa=50,EK=-80,ECa=80,EL=-55,gL=0.01,C=0.1;
+    let V=-65,mNa=0.01,hNa=0.9,mCaT=0.01,hCaT=0.9,mKCa=0.01,mKd=0.01,Ca=0.05;
+    const boltz=(v,vh,k)=>1/(1+Math.exp((vh-v)/k));
+    const ts=[],Vs=[],Cas=[],spikes=[];
+    const steps=Math.round(T/dt),skip=10;
+    for(let i=0;i<steps;i++){
+      const t=i*dt;
+      const mNainf=boltz(V,-24,11.5),hNainf=boltz(V,-62,-16);
+      const mCaTinf=boltz(V,-27.1,7.2),hCaTinf=boltz(V,-32.1,-5.5);
+      const mKdtau=7.2-6.4/(1+Math.exp((V+46.7)/(-19.8)));
+      const mKcainf=boltz(V,-28.3,12.6);
+      const tauNa=1.32-1.26/(1+Math.exp((V+120)/(-25)));
+      mNa+=(dt/tauNa)*(mNainf-mNa);
+      hNa+=(dt/3)*(hNainf-hNa);
+      mCaT+=(dt/21.7)*(mCaTinf-mCaT);
+      hCaT+=(dt/105)*(hCaTinf-hCaT);
+      mKd+=(dt/Math.max(mKdtau,0.1))*(boltz(V,-14.2,11.8)-mKd);
+      mKCa+=(dt/90.3)*(mKcainf-mKCa);
+      Ca+=dt*(-0.94*(gCaT*mCaT*mCaT*hCaT*(V-ECa))-Ca/20);
+      Ca=Math.max(Ca,0.001);
+      const ICaKterm=Ca/(Ca+3);
+      const INa_=gNa*mNa*mNa*mNa*hNa*(V-ENa);
+      const ICaT_=gCaT*mCaT*mCaT*hCaT*(V-ECa);
+      const IKCa_=gKCa*mKCa*ICaKterm*(V-EK);
+      const IKd_=gKd*mKd*mKd*mKd*mKd*(V-EK);
+      const IL_=gL*(V-EL);
+      V+=dt/C*(Iext-INa_-ICaT_-IKCa_-IKd_-IL_);
+      V=Math.min(V,50);
+      if(i>0&&V>=0&&Vs[Vs.length-1]<0) spikes.push(t);
+      if(i%skip===0){ts.push(parseFloat(t.toFixed(1)));Vs.push(parseFloat(V.toFixed(2)));Cas.push(parseFloat(Ca.toFixed(4)));}
+    }
+    const fr=spikes.length/(T/1000);
+    return{ts,series:[
+      {label:'V (mV)',data:Vs,color:'#4f8ef7'},
+      {label:'[Ca²⁺] scaled',data:Cas.map(c=>c*500-65),color:'#f5a623'},
+    ],metrics:[
+      {label:"Spikes",val:spikes.length,cls:"green"},
+      {label:"Fire rate (Hz)",val:fr.toFixed(1),cls:"blue"},
+      {label:"Peak Ca (μM)",val:Math.max(...Cas).toFixed(4),cls:"amber"},
+    ],phase:{x:Vs,y:Cas,xlabel:"V (mV)",ylabel:"[Ca²⁺] (μM)"}};
+  }
+},
+
+/* ============ 16 STDP ============ */
+stdp: {
+  title:"STDP Learning Rule",tag:"tag-neuro",tagLabel:"Plasticity",
+  desc:"Spike-Timing Dependent Plasticity: the synaptic weight changes depending on the relative timing of pre- and post-synaptic spikes. A biological implementation of Hebbian learning with temporal precision.",
+  equations:`<span class="eq-label">Weight change for each pre-post spike pair</span>
+ΔW = <span class="eq-var">A₊</span>·exp(-|Δt|/<span class="eq-var">τ₊</span>)  if Δt > 0  <span class="eq-comment">(LTP: post after pre)</span>
+ΔW = -<span class="eq-var">A₋</span>·exp(-|Δt|/<span class="eq-var">τ₋</span>)  if Δt < 0  <span class="eq-comment">(LTD: pre after post)</span>
+  where Δt = t_post - t_pre
+
+<span class="eq-label">Online trace formulation</span>
+dx/dt = -x/<span class="eq-var">τ₊</span>  + Σᵢ δ(t-tᵢ_pre)
+dy/dt = -y/<span class="eq-var">τ₋</span>  + Σⱼ δ(t-tⱼ_post)
+ΔW_+ = A₊·y(t_pre),   ΔW_- = -A₋·x(t_post)`,
+  params:[
+    {id:"stdp_Ap",label:"A₊ (LTP amp)",min:0.001,max:0.05,step:0.001,val:0.01,desc:"LTP amplitude"},
+    {id:"stdp_Am",label:"A₋ (LTD amp)",min:0.001,max:0.05,step:0.001,val:0.012,desc:"LTD amplitude"},
+    {id:"stdp_taup",label:"τ₊ (ms)",min:5,max:40,step:1,val:20,desc:"LTP time window"},
+    {id:"stdp_taum",label:"τ₋ (ms)",min:5,max:60,step:1,val:20,desc:"LTD time window"},
+    {id:"stdp_rate",label:"Pre rate (Hz)",min:5,max:100,step:5,val:40,desc:"Pre-synaptic spike rate"},
+    {id:"stdp_delay",label:"Δt offset (ms)",min:-30,max:30,step:1,val:5,desc:"Pre-post delay"},
+  ],
+  paramDescs:[
+    {n:"Δt",d:"Post - pre spike timing (ms)"},
+    {n:"A₊,A₋",d:"LTP and LTD amplitudes"},
+    {n:"τ₊,τ₋",d:"Exponential window width"},
+    {n:"W",d:"Synaptic weight (normalized)"},
+    {n:"x,y",d:"Eligibility traces"},
+  ],
+  run:function(p){
+    const Ap=p.stdp_Ap,Am=p.stdp_Am,taup=p.stdp_taup,taum=p.stdp_taum;
+    const dt_range=Array.from({length:201},(_,i)=>i-100);
+    const STDP_curve=dt_range.map(dt=>dt>0?Ap*Math.exp(-dt/taup):-Am*Math.exp(dt/taum));
+    const T=1000,preRate=p.stdp_rate,offset=p.stdp_delay;
+    const isi=1000/preRate;
+    let preSpikes=[],postSpikes=[];
+    for(let t=0;t<T;t+=isi){preSpikes.push(t);postSpikes.push(t+offset);}
+    let W=0.5;const Ws=[W];
+    preSpikes.sort((a,b)=>a-b);postSpikes.sort((a,b)=>a-b);
+    const allSpikes=[...preSpikes.map(t=>({t,type:'pre'})),...postSpikes.map(t=>({t,type:'post'}))].sort((a,b)=>a.t-b.t);
+    const wts=[W];
+    for(let i=0;i<allSpikes.length;i++){
+      const sp=allSpikes[i];
+      if(sp.type==='post'){
+        for(const pre of preSpikes.filter(t=>t<sp.t)){
+          const dT=sp.t-pre;if(dT<0||dT>5*taup)continue;
+          W+=Ap*Math.exp(-dT/taup);
+        }
+      } else {
+        for(const post of postSpikes.filter(t=>t<sp.t)){
+          const dT=sp.t-post;if(dT<0||dT>5*taum)continue;
+          W-=Am*Math.exp(-dT/taum);
+        }
+      }
+      W=Math.max(0,Math.min(1,W));
+      wts.push(parseFloat(W.toFixed(4)));
+    }
+    return{ts:dt_range,series:[
+      {label:'STDP window (ΔW)',data:STDP_curve,color:'#00d4aa'},
+    ],metrics:[
+      {label:"Final weight",val:W.toFixed(4),cls:W>0.5?"green":"red"},
+      {label:"Δ weight",val:(W-0.5).toFixed(4),cls:W>0.5?"green":"red"},
+      {label:"A₊/A₋ ratio",val:(Ap/Am).toFixed(2),cls:"blue"},
+      {label:"Net STDP",val:Ap*taup>Am*taum?"LTP dominant":"LTD dominant",cls:Ap*taup>Am*taum?"green":"red"},
+    ],phase:null};
+  }
+},
+
+/* ============ 17 TSODYKS-MARKRAM ============ */
+tsodyks: {
+  title:"Tsodyks-Markram Synapse",tag:"tag-neuro",tagLabel:"Plasticity",
+  desc:"Short-term synaptic plasticity model (1997). Describes depression and facilitation at synapses through the dynamics of neurotransmitter resources. Essential for understanding computational roles of short-term memory at synapses.",
+  equations:`<span class="eq-label">Resource variables (depression model)</span>
+du/dt = -u/<span class="eq-var">τ_f</span>  + <span class="eq-var">U</span>·(1-u)·δ(t-t_sp)   <span class="eq-comment">(facilitation)</span>
+dx/dt = (1-x)/<span class="eq-var">τ_d</span> - u·x·δ(t-t_sp)    <span class="eq-comment">(depression)</span>
+I_syn = <span class="eq-var">A</span>·u·x·δ(t-t_sp)               <span class="eq-comment">(synaptic current)</span>
+
+<span class="eq-label">Interpretations</span>
+<span class="eq-comment">u = neurotransmitter release probability [0,1]</span>
+<span class="eq-comment">x = fraction of available resources [0,1]</span>
+<span class="eq-comment">τ_d: depression recovery, τ_f: facilitation τ</span>
+<span class="eq-comment">Facilitating: τ_f >> τ_d, U small</span>
+<span class="eq-comment">Depressing: τ_f << τ_d, U large</span>`,
+  params:[
+    {id:"tm_U",label:"U (release prob)",min:0.05,max:0.9,step:0.05,val:0.5,desc:"Baseline release probability"},
+    {id:"tm_taud",label:"τ_d (ms)",min:100,max:2000,step:50,val:800,desc:"Depression recovery τ"},
+    {id:"tm_tauf",label:"τ_f (ms)",min:10,max:2000,step:50,val:10,desc:"Facilitation τ"},
+    {id:"tm_A",label:"A (amp)",min:0.1,max:5,step:0.1,val:1,desc:"Synaptic efficacy amplitude"},
+    {id:"tm_rate",label:"Spike rate (Hz)",min:1,max:100,step:1,val:20,desc:"Pre-synaptic firing rate"},
+    {id:"tm_dur",label:"Duration (ms)",min:200,max:3000,step:100,val:1000,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"u",d:"Release probability variable"},
+    {n:"x",d:"Available resources fraction"},
+    {n:"U",d:"Baseline release probability"},
+    {n:"τ_d",d:"Depression time constant"},
+    {n:"τ_f",d:"Facilitation time constant"},
+    {n:"I_syn",d:"Synaptic current amplitude"},
+  ],
+  run:function(p){
+    const U=p.tm_U,taud=p.tm_taud,tauf=p.tm_tauf,A=p.tm_A,rate=p.tm_rate,T=p.tm_dur;
+    const isi=1000/rate;
+    let u=U,x=1,t=0,nextSpike=isi;
+    const ts=[],Is=[],xs=[],us=[];
+    const dt=0.5;
+    while(t<T){
+      if(t>=nextSpike){
+        u=u+U*(1-u);
+        const Isyn=A*u*x;
+        x=x-u*x;
+        u=Math.max(0,Math.min(1,u));
+        x=Math.max(0,Math.min(1,x));
+        ts.push(parseFloat(t.toFixed(1)));
+        Is.push(parseFloat(Isyn.toFixed(4)));
+        xs.push(parseFloat(x.toFixed(4)));
+        us.push(parseFloat(u.toFixed(4)));
+        nextSpike+=isi;
+      }
+      u+=dt*(-u/tauf+U*(1-u)/tauf*0);
+      x+=dt*((1-x)/taud);
+      u=Math.max(0,Math.min(1,u));
+      x=Math.max(0,Math.min(1,x));
+      t+=dt;
+    }
+    return{ts,series:[
+      {label:'I_syn (a.u.)',data:Is,color:'#4f8ef7'},
+      {label:'x (resources)',data:xs,color:'#f5a623'},
+      {label:'u (release prob)',data:us,color:'#c084fc'},
+    ],metrics:[
+      {label:"Peak I_syn",val:Math.max(...Is).toFixed(3),cls:"green"},
+      {label:"Final I_syn",val:Is[Is.length-1]?Is[Is.length-1].toFixed(3):'—',cls:"blue"},
+      {label:"Synapse type",val:tauf>taud?"Facilitating":"Depressing",cls:tauf>taud?"green":"red"},
+    ],phase:null};
+  }
+},
+
+/* ============ 18 DESTEXHE SYNAPSE ============ */
+destexhe: {
+  title:"Destexhe Kinetic Synapse",tag:"tag-neuro",tagLabel:"Plasticity",
+  desc:"Kinetic model of synaptic receptor activation (Destexhe et al. 1994). Explicitly models neurotransmitter binding, receptor state transitions, and resulting conductance changes for AMPA, NMDA, GABA-A, and GABA-B receptors.",
+  equations:`<span class="eq-label">Two-state kinetic model</span>
+dr/dt = <span class="eq-var">α</span>·[T]·(1-r) - <span class="eq-var">β</span>·r
+
+I_syn = <span class="eq-var">g_max</span>·r·(V - <span class="eq-var">E_rev</span>)
+
+<span class="eq-label">Transmitter pulse</span>
+[T](t) = <span class="eq-var">T_max</span> for t_sp ≤ t ≤ t_sp + Δ
+         = 0 otherwise
+
+<span class="eq-label">NMDA voltage-dependent Mg block</span>
+I_NMDA = g·r·B(V)·(V-E_rev)
+B(V) = 1 / (1 + exp(-0.062·V)·[Mg²⁺]/3.57)`,
+  params:[
+    {id:"dest_alpha",label:"α (binding rate)",min:0.1,max:20,step:0.1,val:5,desc:"Transmitter binding rate (mM⁻¹ms⁻¹)"},
+    {id:"dest_beta",label:"β (unbinding)",min:0.1,max:5,step:0.1,val:0.18,desc:"Receptor unbinding rate (ms⁻¹)"},
+    {id:"dest_Tmax",label:"T_max (mM)",min:0.1,max:2,step:0.1,val:1,desc:"Peak transmitter concentration"},
+    {id:"dest_gmax",label:"g_max (nS)",min:0.1,max:5,step:0.1,val:0.5,desc:"Max synaptic conductance"},
+    {id:"dest_Erev",label:"E_rev (mV)",min:-90,max:0,step:1,val:0,desc:"Reversal potential"},
+    {id:"dest_spikerate",label:"Spike rate (Hz)",min:1,max:50,step:1,val:10,desc:"Pre-synaptic rate"},
+    {id:"dest_dur",label:"Duration (ms)",min:100,max:1000,step:50,val:400,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"r",d:"Fraction of open receptors [0,1]"},
+    {n:"[T]",d:"Synaptic cleft transmitter conc."},
+    {n:"α,β",d:"Binding/unbinding rates"},
+    {n:"g_max",d:"Maximum conductance"},
+    {n:"E_rev",d:"Reversal potential (mV)"},
+    {n:"V_post",d:"Post-synaptic membrane voltage"},
+  ],
+  run:function(p){
+    const dt=0.1,T=p.dest_dur,alpha=p.dest_alpha,beta=p.dest_beta,Tmax=p.dest_Tmax;
+    const gmax=p.dest_gmax,Erev=p.dest_Erev,rate=p.dest_spikerate;
+    const isi=1000/rate,pulseW=1,Vpost=-65;
+    let r=0,t=0,nextSpike=10;
+    const ts=[],Rs=[],Is=[];
+    while(t<T){
+      const inPulse=(t>=nextSpike&&t<nextSpike+pulseW)?1:0;
+      if(t>nextSpike+pulseW)nextSpike+=isi;
+      const T_conc=inPulse?Tmax:0;
+      const dr=alpha*T_conc*(1-r)-beta*r;
+      r+=dt*dr;r=Math.max(0,Math.min(1,r));
+      const Isyn=gmax*r*(Vpost-Erev);
+      ts.push(parseFloat(t.toFixed(1)));
+      Rs.push(parseFloat(r.toFixed(4)));
+      Is.push(parseFloat(Isyn.toFixed(4)));
+      t+=dt;
+    }
+    return{ts,series:[
+      {label:'r (open fraction)',data:Rs,color:'#00d4aa'},
+      {label:'I_syn (pA scaled)',data:Is.map(v=>v*100),color:'#f76b4f'},
+    ],metrics:[
+      {label:"Peak r",val:Math.max(...Rs).toFixed(4),cls:"green"},
+      {label:"Peak I_syn",val:Math.max(...Is).toFixed(4)+" nS·mV",cls:"blue"},
+      {label:"τ_decay (ms)",val:(1/beta).toFixed(1),cls:""},
+    ],phase:null};
+  }
+},
+
+/* ============ 19 THALAMOCORTICAL ============ */
+thalcortical: {
+  title:"Thalamocortical Model",tag:"tag-oscillation",tagLabel:"EEG Rhythm",
+  desc:"A coupled thalamo-cortical loop model generating sleep spindles (7-14 Hz), slow-wave sleep oscillations (0.5-2 Hz), and up/down states. The thalamic reticular nucleus (TRN) provides inhibitory feedback creating the spindle rhythm.",
+  equations:`<span class="eq-label">Thalamocortical relay (TC) neuron</span>
+C·dV_TC/dt = -I_L - I_Na - I_K - <span class="eq-var">I_T</span> - I_syn + I_ext
+
+<span class="eq-label">Thalamic reticular nucleus (TRN)</span>
+C·dV_TRN/dt = -I_L - I_Na - I_K - <span class="eq-var">I_T</span> - I_syn_from_TC
+
+<span class="eq-label">T-type Ca²⁺ current (key for spindles)</span>
+I_T = g_T · m_T² · h_T · (V - E_Ca)
+m_T∞ = 1/(1+exp(-(V+59)/6.2))
+h_T∞ = 1/(1+exp((V+81)/4))
+
+<span class="eq-label">TC↔TRN coupling creates spindle oscillation</span>
+<span class="eq-comment">TC excites TRN (AMPA), TRN inhibits TC (GABA-B)</span>`,
+  params:[
+    {id:"tc_gT",label:"g_T (T-Ca, mS/cm²)",min:0,max:5,step:0.1,val:2,desc:"T-type Ca conductance"},
+    {id:"tc_gGABA",label:"g_GABA (TRN→TC)",min:0,max:5,step:0.1,val:1.5,desc:"GABA-B conductance from TRN"},
+    {id:"tc_Iext",label:"I_ext (μA/cm²)",min:-2,max:2,step:0.05,val:-0.5,desc:"Background current to TC"},
+    {id:"tc_dur",label:"Duration (ms)",min:500,max:5000,step:250,val:2000,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"V_TC",d:"TC relay neuron voltage"},
+    {n:"V_TRN",d:"Reticular nucleus voltage"},
+    {n:"I_T",d:"Low-threshold T-type Ca²⁺"},
+    {n:"h_T",d:"Ca T-channel inactivation"},
+    {n:"g_GABA",d:"TRN→TC GABA-B strength"},
+  ],
+  run:function(p){
+    const dt=0.05,T=p.tc_dur;
+    const gT=p.tc_gT,gGABA=p.tc_gGABA,Iext=p.tc_Iext;
+    const C=1,gNa=90,gK=10,gL=0.05,ENa=50,EK=-90,EL=-70,ECa=120;
+    const boltz=(v,v50,k)=>1/(1+Math.exp((v50-v)/k));
+    let VTC=-70,mTC=0.01,hTC=0.35,nTC=0.5,hT_TC=0.9;
+    let VTRN=-70,hT_TRN=0.9,mTRN=0.01,hTRN=0.35,nTRN=0.5;
+    let s_TC=0,s_TRN=0;
+    const ts=[],VTCs=[],VTRNs=[];
+    const skip=4;
+    for(let i=0;i<T/dt;i++){
+      const t=i*dt;
+      const mTCinf=boltz(VTC,-35,5),hTCinf=boltz(VTC,-65,-7),nTCinf=boltz(VTC,-30,6);
+      const mT_TCinf=boltz(VTC,-59,6.2),hT_TCinf=boltz(VTC,-81,-4);
+      mTC+=(dt/0.1)*(mTCinf-mTC);hTC+=(dt/1)*(hTCinf-hTC);nTC+=(dt/5)*(nTCinf-nTC);hT_TC+=(dt/30)*(hT_TCinf-hT_TC);
+      const mT_TRNinf=boltz(VTRN,-59,6.2),hT_TRNinf=boltz(VTRN,-81,-4);
+      const mTRNinf=boltz(VTRN,-35,5),hTRNinf=boltz(VTRN,-65,-7),nTRNinf=boltz(VTRN,-30,6);
+      mTRN+=(dt/0.1)*(mTRNinf-mTRN);hTRN+=(dt/1)*(hTRNinf-hTRN);nTRN+=(dt/5)*(nTRNinf-nTRN);hT_TRN+=(dt/30)*(hT_TRNinf-hT_TRN);
+      const IT_TC=gT*mT_TCinf*mT_TCinf*hT_TC*(VTC-ECa);
+      const IT_TRN=gT*mT_TRNinf*mT_TRNinf*hT_TRN*(VTRN-ECa);
+      const Is_GABA=-gGABA*s_TRN*(VTC-(-90));
+      const Is_AMPA=0.05*s_TC*(VTRN-0);
+      const dVTC=(Iext-gNa*mTC*mTC*mTC*hTC*(VTC-ENa)-gK*nTC*nTC*nTC*nTC*(VTC-EK)-gL*(VTC-EL)-IT_TC+Is_GABA)/C;
+      const dVTRN=(-gNa*mTRN*mTRN*mTRN*hTRN*(VTRN-ENa)-gK*nTRN*nTRN*nTRN*nTRN*(VTRN-EK)-gL*(VTRN-EL)-IT_TRN+Is_AMPA)/C;
+      s_TC+=dt*((VTC>-30?10:0)*(1-s_TC)-s_TC/50);
+      s_TRN+=dt*((VTRN>-30?10:0)*(1-s_TRN)-s_TRN/150);
+      VTC+=dt*dVTC;VTRN+=dt*dVTRN;
+      VTC=Math.min(Math.max(VTC,-90),50);VTRN=Math.min(Math.max(VTRN,-90),50);
+      if(i%skip===0){ts.push(parseFloat(t.toFixed(1)));VTCs.push(parseFloat(VTC.toFixed(2)));VTRNs.push(parseFloat(VTRN.toFixed(2)));}
+    }
+    return{ts,series:[
+      {label:'V_TC (mV)',data:VTCs,color:'#4f8ef7'},
+      {label:'V_TRN (mV)',data:VTRNs,color:'#f76b4f'},
+    ],metrics:[
+      {label:"TC peak (mV)",val:Math.max(...VTCs).toFixed(1),cls:"blue"},
+      {label:"TRN peak (mV)",val:Math.max(...VTRNs).toFixed(1),cls:"red"},
+    ],phase:{x:VTCs,y:VTRNs,xlabel:"V_TC (mV)",ylabel:"V_TRN (mV)"}};
+  }
+},
+
+/* ============ 20 BOLD/BALLOON ============ */
+boldmodel: {
+  title:"Balloon-Windkessel (fMRI BOLD)",tag:"tag-oscillation",tagLabel:"fMRI",
+  desc:"The hemodynamic Balloon-Windkessel model (Buxton 1998, Friston 2000) converts neural activity into the fMRI BOLD signal via neurovascular coupling. Used for forward modeling and DCM (Dynamic Causal Modeling).",
+  equations:`<span class="eq-label">Hemodynamic state equations</span>
+ds/dt = <span class="eq-var">z</span>(t) - <span class="eq-var">κ</span>·s - <span class="eq-var">γ</span>·(f-1)    <span class="eq-comment">(vasodilatory signal)</span>
+df/dt = s                                      <span class="eq-comment">(CBF inflow)</span>
+dv/dt = (f - v^(1/<span class="eq-var">α</span>)) / <span class="eq-var">τ</span>            <span class="eq-comment">(CBV)</span>
+dq/dt = (f·(1-(1-E₀)^(1/f))/E₀ - q·v^(1/α-1)) / τ  <span class="eq-comment">(dHb)</span>
+
+<span class="eq-label">BOLD signal (Buxton model)</span>
+y(t) = V₀·(k₁·(1-q) + k₂·(1-q/v) + k₃·(1-v))
+k₁=7E₀, k₂=2, k₃=2E₀-0.2`,
+  params:[
+    {id:"bold_kappa",label:"κ (signal decay)",min:0.1,max:2,step:0.05,val:0.65,desc:"Vasodilatory signal decay"},
+    {id:"bold_gamma",label:"γ (autoregulation)",min:0.1,max:1,step:0.05,val:0.41,desc:"Flow-dependent feedback"},
+    {id:"bold_tau",label:"τ (transit time, s)",min:0.5,max:4,step:0.1,val:0.98,desc:"Mean transit time"},
+    {id:"bold_alpha",label:"α (Grubb exponent)",min:0.1,max:0.5,step:0.01,val:0.32,desc:"Grubb's exponent"},
+    {id:"bold_E0",label:"E₀ (oxygen extract)",min:0.2,max:0.6,step:0.02,val:0.4,desc:"Resting O₂ extraction fraction"},
+    {id:"bold_dur",label:"Duration (s)",min:10,max:60,step:5,val:30,desc:"Sim duration (seconds)"},
+  ],
+  paramDescs:[
+    {n:"s",d:"Vasodilatory signal"},
+    {n:"f",d:"CBF (normalized inflow)"},
+    {n:"v",d:"CBV (normalized blood vol)"},
+    {n:"q",d:"Deoxyhemoglobin content"},
+    {n:"z(t)",d:"Neural activity input"},
+    {n:"E₀",d:"Resting O₂ extraction frac"},
+  ],
+  run:function(p){
+    const dt=0.01,T=p.bold_dur,kappa=p.bold_kappa,gamma=p.bold_gamma,tau=p.bold_tau,alpha=p.bold_alpha,E0=p.bold_E0;
+    const V0=0.04;const k1=7*E0,k2=2,k3=2*E0-0.2;
+    let s=0,f=1,v=1,q=1;
+    const ts=[],BOLDs=[],zs=[];
+    const blockON=5,blockDUR=10;
+    for(let t=0;t<T;t+=dt){
+      const z=(t>=blockON&&t<blockON+blockDUR)?0.5:0;
+      const ds=z-kappa*s-gamma*(f-1);
+      const df_=s;
+      const dv=(f-Math.pow(v,1/alpha))/tau;
+      const dq=(f*(1-Math.pow(1-E0,1/f))/E0-q*Math.pow(v,1/alpha-1))/tau;
+      s+=dt*ds;f+=dt*df_;v+=dt*dv;q+=dt*dq;
+      f=Math.max(0.01,f);v=Math.max(0.01,v);q=Math.max(0.01,q);
+      const BOLD=V0*(k1*(1-q)+k2*(1-q/v)+k3*(1-v));
+      if(Math.round(t/dt)%5===0){ts.push(parseFloat(t.toFixed(2)));BOLDs.push(parseFloat(BOLD.toFixed(5)));zs.push(parseFloat(z.toFixed(2)));}
+    }
+    return{ts,series:[
+      {label:'BOLD signal (%)',data:BOLDs.map(v=>v*100),color:'#f76b4f'},
+      {label:'Neural input z(t)',data:zs,color:'#4f8ef7'},
+    ],metrics:[
+      {label:"Peak BOLD (%)",val:(Math.max(...BOLDs)*100).toFixed(3),cls:"red"},
+      {label:"BOLD onset latency",val:"~5s",cls:"blue"},
+    ],phase:null};
+  }
+},
+
+/* ============ 21 MEAN FIELD EEG ============ */
+meanfield: {
+  title:"Mean-Field EEG Model",tag:"tag-oscillation",tagLabel:"EEG Rhythm",
+  desc:"A mean-field model (Robinson et al. 2001, Breakspear 2003) of the corticothalamic loop generating broadband EEG power spectra including delta, theta, alpha, and beta bands. Used for subject-specific parameter estimation.",
+  equations:`<span class="eq-label">Corticothalamic mean-field equations</span>
+Q_e = Q_max / (1 + exp(-(V_e - θ)/<span class="eq-var">σ</span>))     <span class="eq-comment">(firing rate sigmoid)</span>
+
+<span class="eq-var">α·β</span>·Φ̈ + (α+β)·Φ̇ + α·β·Φ = α·β·<span class="eq-var">φ_in</span>   <span class="eq-comment">(axonal pulse)</span>
+V_e = V_e0 + ν_ee·Φ_e + ν_es·Φ_s              <span class="eq-comment">(cortical potential)</span>
+
+<span class="eq-label">Power spectral density approximation</span>
+P(f) ∝ |χ(2πif)|²
+<span class="eq-comment">Alpha peak at f_α ≈ (1/2π)·√(|ν_ee·ν_es·ν_se·ν_sr|)</span>`,
+  params:[
+    {id:"mf_nee",label:"ν_ee (cortical exc)",min:0,max:5,step:0.05,val:1.53,desc:"E→E corticocortical weight"},
+    {id:"mf_nes",label:"ν_es (thal→cortex)",min:0,max:5,step:0.05,val:1.5,desc:"Thalamus→E cortical weight"},
+    {id:"mf_nse",label:"ν_se (cortex→thal)",min:0,max:5,step:0.05,val:1.5,desc:"Cortex→TC weight"},
+    {id:"mf_nsr",label:"ν_sr (cortex→TRN)",min:-5,max:0,step:0.05,val:-0.5,desc:"Cortex→TRN weight"},
+    {id:"mf_alpha",label:"α (syn decay, s⁻¹)",min:40,max:100,step:5,val:83,desc:"Inhibitory decay rate"},
+    {id:"mf_dur",label:"Duration (ms)",min:500,max:3000,step:250,val:1500,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"Q",d:"Population-mean firing rate"},
+    {n:"Φ",d:"Axonal pulse rate"},
+    {n:"V_e",d:"Mean soma potential (mV)"},
+    {n:"ν_ee",d:"Corticocortical connection strength"},
+    {n:"α,β",d:"Synaptic rate constants"},
+    {n:"σ",d:"Sigmoid steepness parameter"},
+  ],
+  run:function(p){
+    const dt=0.0001,T=p.mf_dur/1000;
+    const nee=p.mf_nee,nes=p.mf_nes,nse=p.mf_nse,nsr=p.mf_nsr;
+    const alpha=p.mf_alpha,beta=alpha*4;
+    const Qmax=340,theta=0.013,sig=0.0038;
+    const Gt=p.mf_nes*p.mf_nse*0.4;
+    const Gr=Math.abs(p.mf_nsr)*0.2;
+    let Ve=0.012,phi_e=0,dphi_e=0,Vs=0,phi_s=0,dphi_s=0,Vr=0;
+    const ts=[],Ves=[],Phis=[];
+    const skip=100;
+    for(let i=0;i<T/dt;i++){
+      const Qe=Qmax/(1+Math.exp(-(Ve-theta)/sig));
+      const Qs=Qmax/(1+Math.exp(-(Vs-theta)/sig));
+      const Qr=Qmax/(1+Math.exp(-(Vr-theta)/sig));
+      const noise=(Math.random()-0.5)*0.002;
+      const ddphi_e=alpha*beta*(nee*Qe+nes*Qs-phi_e*(alpha+beta)/alpha-dphi_e/alpha)+noise;
+      phi_e+=dt*dphi_e;dphi_e+=dt*ddphi_e;
+      Ve=nee*phi_e+nes*phi_s;
+      Vs=nse*phi_e*0.5;Vr=nsr*phi_e*0.3;
+      if(i%skip===0){ts.push(parseFloat((i*dt*1000).toFixed(1)));Ves.push(parseFloat(Ve.toFixed(6)));Phis.push(parseFloat(phi_e.toFixed(4)));}
+    }
+    return{ts,series:[
+      {label:'V_e (cortical potential)',data:Ves.map(v=>v*1000),color:'#4f8ef7'},
+      {label:'Φ_e (cortical rate)',data:Phis,color:'#00d4aa'},
+    ],metrics:[
+      {label:"Peak V_e (mV)",val:(Math.max(...Ves)*1000).toFixed(3),cls:"blue"},
+      {label:"ν_ee",val:nee,cls:"green"},
+    ],phase:null};
+  }
+},
+
+/* ============ 22 KALMAN NEURAL ============ */
+kalmanneuro: {
+  title:"Kalman Neural Filter",tag:"tag-neuro",tagLabel:"Computational",
+  desc:"Application of the Kalman filter to neural state estimation — the core of Brain-Computer Interface (BCI) decoders (Shenoy, Kalska). Estimates latent neural states from observed spike trains or LFP in real-time with optimal Bayesian updates.",
+  equations:`<span class="eq-label">State-space model of neural dynamics</span>
+x_t = <span class="eq-var">A</span>·x_{t-1} + w_t,   w_t ~ N(0, <span class="eq-var">Q</span>)   <span class="eq-comment">(state transition)</span>
+y_t = <span class="eq-var">C</span>·x_t + v_t,         v_t ~ N(0, <span class="eq-var">R</span>)   <span class="eq-comment">(observation model)</span>
+
+<span class="eq-label">Kalman filter recursion</span>
+x̂_t|t-1 = A·x̂_{t-1}                              <span class="eq-comment">(predict state)</span>
+P_t|t-1  = A·P_{t-1}·Aᵀ + Q                       <span class="eq-comment">(predict covariance)</span>
+K_t      = P_t|t-1·Cᵀ·(C·P_t|t-1·Cᵀ + R)⁻¹       <span class="eq-comment">(Kalman gain)</span>
+x̂_t      = x̂_t|t-1 + K_t·(y_t - C·x̂_t|t-1)      <span class="eq-comment">(update state)</span>
+P_t      = (I - K_t·C)·P_t|t-1                    <span class="eq-comment">(update covariance)</span>`,
+  params:[
+    {id:"kal_procnoise",label:"Process noise (Q)",min:0.01,max:2,step:0.05,val:0.5,desc:"State transition noise variance"},
+    {id:"kal_obsnoise",label:"Obs noise (R)",min:0.1,max:5,step:0.1,val:1,desc:"Observation noise variance"},
+    {id:"kal_A",label:"A (state decay)",min:0.5,max:1,step:0.01,val:0.95,desc:"State transition coefficient"},
+    {id:"kal_dur",label:"Duration (steps)",min:50,max:500,step:25,val:200,desc:"Number of time steps"},
+  ],
+  paramDescs:[
+    {n:"x_t",d:"Hidden neural state"},
+    {n:"y_t",d:"Observed signal (spikes/LFP)"},
+    {n:"A",d:"State transition matrix"},
+    {n:"C",d:"Observation matrix"},
+    {n:"Q,R",d:"Process and obs noise"},
+    {n:"K_t",d:"Kalman gain (optimal update)"},
+  ],
+  run:function(p){
+    const T=p.kal_dur,Q=p.kal_procnoise,R=p.kal_obsnoise,A=p.kal_A,C=1;
+    const rng=()=>(Math.random()+Math.random()+Math.random()+Math.random()-2)*1.2;
+    const trueState=[0];for(let i=1;i<T;i++)trueState.push(A*trueState[i-1]+Math.sqrt(Q)*rng());
+    const obs=trueState.map(x=>C*x+Math.sqrt(R)*rng());
+    let xhat=0,P=1;
+    const ts=[],trueS=[],obsS=[],estS=[],Kgains=[];
+    for(let t=0;t<T;t++){
+      const xpred=A*xhat,Ppred=A*A*P+Q;
+      const K=Ppred*C/(C*C*Ppred+R);
+      xhat=xpred+K*(obs[t]-C*xpred);
+      P=(1-K*C)*Ppred;
+      ts.push(t);trueS.push(parseFloat(trueState[t].toFixed(3)));obsS.push(parseFloat(obs[t].toFixed(3)));estS.push(parseFloat(xhat.toFixed(3)));Kgains.push(parseFloat(K.toFixed(4)));
+    }
+    const mse=estS.reduce((s,v,i)=>s+(v-trueS[i])*(v-trueS[i]),0)/T;
+    return{ts,series:[
+      {label:'True state',data:trueS,color:'#00d4aa'},
+      {label:'Observation',data:obsS,color:'rgba(255,255,255,0.25)'},
+      {label:'Kalman estimate',data:estS,color:'#f76b4f'},
+    ],metrics:[
+      {label:"MSE",val:mse.toFixed(4),cls:""},
+      {label:"RMSE",val:Math.sqrt(mse).toFixed(4),cls:"blue"},
+      {label:"Steady K gain",val:Kgains[Kgains.length-1].toFixed(4),cls:"green"},
+    ],phase:null};
+  }
+},
+
+/* ============ 23 CABLE EQUATION ============ */
+cableneuron: {
+  title:"Cable Equation (Passive Dendrite)",tag:"tag-neuro",tagLabel:"Computational",
+  desc:"Rall's cable theory (1959) of passive signal propagation in dendritic trees. A PDE describing how voltage decays and spreads along a cylindrical dendrite with resistive and capacitive membrane.",
+  equations:`<span class="eq-label">Cable equation (linearized compartmental model)</span>
+<span class="eq-var">τ_m</span>·∂V/∂t = <span class="eq-var">λ²</span>·∂²V/∂x² - V + <span class="eq-var">r_m</span>·I(x,t)
+
+<span class="eq-label">Space and time constants</span>
+λ = √(r_m / r_i)    <span class="eq-comment">(electrotonic length constant, μm)</span>
+τ_m = r_m · c_m     <span class="eq-comment">(membrane time constant, ms)</span>
+
+<span class="eq-label">Compartmental (finite difference) discretization</span>
+C_m · dV_i/dt = g_i,i-1·(V_{i-1}-V_i) + g_i,i+1·(V_{i+1}-V_i) - g_m·V_i + I_inj(i)
+
+<span class="eq-label">Electrotonic coordinates</span>
+X = x/λ  <span class="eq-comment">(normalized by space constant)</span>
+T = t/τ_m <span class="eq-comment">(normalized by time constant)</span>`,
+  params:[
+    {id:"cab_lambda",label:"λ (μm)",min:100,max:1000,step:25,val:400,desc:"Electrotonic space constant"},
+    {id:"cab_tau",label:"τ_m (ms)",min:5,max:50,step:1,val:20,desc:"Membrane time constant"},
+    {id:"cab_Iamp",label:"I_inj (nA)",min:0.1,max:5,step:0.1,val:1,desc:"Injected current at soma"},
+    {id:"cab_L",label:"Dendrite length (μm)",min:200,max:2000,step:50,val:800,desc:"Total dendritic cable length"},
+    {id:"cab_dur",label:"Duration (ms)",min:50,max:300,step:10,val:100,desc:"Sim duration"},
+  ],
+  paramDescs:[
+    {n:"V(x,t)",d:"Voltage as function of position & time"},
+    {n:"λ",d:"Space constant (electrotonic length)"},
+    {n:"τ_m",d:"Membrane time constant"},
+    {n:"r_m",d:"Specific membrane resistance (Ω·cm²)"},
+    {n:"r_i",d:"Axial (intracellular) resistance"},
+    {n:"X",d:"Electrotonic distance = x/λ"},
+  ],
+  run:function(p){
+    const lambda=p.cab_lambda,tau=p.cab_tau,Iamp=p.cab_Iamp,L=p.cab_L,T=p.cab_dur;
+    const N=30,dx=L/N,dt=0.5;
+    let V=new Float64Array(N);
+    const ri=0.1,rm=lambda*lambda*ri;
+    const gi=1/(ri*dx),gm=1/(rm*dx),Cm=tau*gm;
+    const ts=[],snapshots={};
+    const snapTimes=[T*0.1,T*0.25,T*0.5,T*1.0].map(Math.round);
+    let step=0;
+    for(let t=0;t<=T;t+=dt){
+      const newV=new Float64Array(N);
+      for(let i=0;i<N;i++){
+        const vl=i>0?V[i-1]:V[0];
+        const vr=i<N-1?V[i+1]:V[N-1]*0.1;
+        const Iinj=i===0?Iamp/Cm*rm:0;
+        newV[i]=V[i]+dt/Cm*(gi*(vl-V[i])+gi*(vr-V[i])-gm*V[i]+Iinj);
+      }
+      V=newV;step++;
+      const tr=Math.round(t);
+      if(snapTimes.includes(tr)&&!snapshots[tr]){snapshots[tr]=[...V];}
+      if(step%5===0)ts.push(parseFloat(t.toFixed(1)));
+    }
+    const pos=Array.from({length:N},(_,i)=>parseFloat((i*dx).toFixed(0)));
+    const snapKeys=Object.keys(snapshots).map(Number).sort((a,b)=>a-b);
+    const colors=['#4f8ef7','#00d4aa','#f76b4f','#c084fc'];
+    const series=snapKeys.map((t,idx)=>({label:`t=${t}ms`,data:snapshots[t].map(v=>parseFloat(v.toFixed(4))),color:colors[idx%colors.length]}));
+    return{ts:pos,series,metrics:[
+      {label:"λ (μm)",val:lambda,cls:"blue"},
+      {label:"τ_m (ms)",val:tau,cls:"green"},
+      {label:"L/λ (electrotonic)",val:(L/lambda).toFixed(2),cls:""},
+      {label:"Compartments",val:N,cls:""},
+    ],phase:null,xLabel:"Dendritic position (μm)"};
+  }
+},
+
+/* ============ 24 ORNSTEIN-UHLENBECK ============ */
+ornstein: {
+  title:"Ornstein-Uhlenbeck Process",tag:"tag-neuro",tagLabel:"Stochastic",
+  desc:"The OU process models correlated stochastic neural inputs — spike train fluctuations at a synapse. It's the biological noise model underlying diffusion approximations to neural dynamics and is essential for understanding variability and signal detection.",
+  equations:`<span class="eq-label">Ornstein-Uhlenbeck SDE</span>
+dX = -<span class="eq-var">θ</span>·(X - <span class="eq-var">μ</span>)·dt + <span class="eq-var">σ</span>·dW
+
+<span class="eq-label">Exact solution</span>
+X(t) = X(0)·e^(-θt) + μ·(1-e^(-θt)) + σ·√((1-e^(-2θt))/(2θ)) · N(0,1)
+
+<span class="eq-label">Stationary distribution</span>
+X(∞) ~ N(μ, σ²/(2θ))
+
+<span class="eq-label">Autocorrelation function</span>
+C(τ) = σ²/(2θ) · exp(-θ|τ|)
+<span class="eq-comment">Correlation time = 1/θ</span>`,
+  params:[
+    {id:"ou_theta",label:"θ (mean-reversion)",min:0.01,max:5,step:0.05,val:0.5,desc:"Mean reversion rate (1/τ_corr)"},
+    {id:"ou_mu",label:"μ (mean)",min:-5,max:5,step:0.1,val:0,desc:"Long-run mean"},
+    {id:"ou_sigma",label:"σ (noise amp)",min:0.1,max:3,step:0.1,val:1,desc:"Noise amplitude"},
+    {id:"ou_dur",label:"Duration",min:100,max:2000,step:100,val:500,desc:"Simulation steps"},
+  ],
+  paramDescs:[
+    {n:"X(t)",d:"Neural input/noise process"},
+    {n:"θ",d:"Mean-reversion rate"},
+    {n:"μ",d:"Stationary mean"},
+    {n:"σ",d:"Diffusion coefficient"},
+    {n:"τ",d:"Correlation time = 1/θ"},
+    {n:"dW",d:"Wiener process increment"},
+  ],
+  run:function(p){
+    const T=p.ou_dur,theta=p.ou_theta,mu=p.ou_mu,sigma=p.ou_sigma,dt=0.1;
+    let X=mu;
+    const ts=[],Xs=[];
+    for(let t=0;t<T;t+=dt){
+      X+=theta*(mu-X)*dt+sigma*Math.sqrt(dt)*((Math.random()+Math.random()-1)*1.2);
+      ts.push(parseFloat(t.toFixed(1)));
+      Xs.push(parseFloat(X.toFixed(4)));
+    }
+    const meanX=(Xs.reduce((a,b)=>a+b,0)/Xs.length).toFixed(4);
+    const varX=(Xs.reduce((s,x)=>s+(x-parseFloat(meanX))*(x-parseFloat(meanX)),0)/Xs.length).toFixed(4);
+    const theorVar=(sigma*sigma/(2*theta)).toFixed(4);
+    return{ts,series:[{label:'X(t)',data:Xs,color:'#00d4aa'}],
+      metrics:[
+        {label:"Empirical mean",val:meanX,cls:"blue"},
+        {label:"Empirical var",val:varX,cls:""},
+        {label:"Theoret. var σ²/2θ",val:theorVar,cls:"green"},
+        {label:"τ_corr = 1/θ",val:(1/theta).toFixed(2),cls:"purple"},
+      ],phase:null};
+  }
+},
+
+/* ============ 25 SPIKE SORTING PCA ============ */
+spikesorting: {
+  title:"Spike Sorting via PCA",tag:"tag-neuro",tagLabel:"Analysis",
+  desc:"Spike sorting algorithm: detect threshold crossings in extracellular recordings, extract waveform snippets, reduce dimensionality via PCA, and cluster neurons with k-means. The standard pipeline for multi-unit electrode recordings.",
+  equations:`<span class="eq-label">Threshold detection</span>
+threshold = <span class="eq-var">k</span> · σ_noise,   σ_noise = median(|x|/0.6745)
+
+<span class="eq-label">PCA decomposition of N × T waveform matrix W</span>
+W = U · Σ · Vᵀ     <span class="eq-comment">(SVD)</span>
+PC scores = W · V[:, 1:k]  <span class="eq-comment">(project to k components)</span>
+
+<span class="eq-label">K-means clustering</span>
+min Σₖ Σᵢ∈Cₖ ||wᵢ - μₖ||²
+<span class="eq-comment">Iterate: assign → update centroids → repeat until convergence</span>
+
+<span class="eq-label">Quality metrics</span>
+ISI violation ratio = #{ISI < 2ms} / #{total ISI}
+L-ratio = Σⱼ∉Cₖ ChiSq_cdf(Mₖ²(xⱼ), df) / nₖ`,
+  params:[
+    {id:"ss_N",label:"N units",min:1,max:4,step:1,val:3,desc:"Number of simulated neurons"},
+    {id:"ss_duration",label:"Duration (s)",min:5,max:30,step:1,val:10,desc:"Recording duration (s)"},
+    {id:"ss_snr",label:"SNR (dB)",min:5,max:30,step:1,val:15,desc:"Signal-to-noise ratio"},
+    {id:"ss_rate",label:"Mean rate (Hz)",min:5,max:60,step:5,val:20,desc:"Mean firing rate per unit"},
+  ],
+  paramDescs:[
+    {n:"σ_noise",d:"Estimated noise std (MAD)"},
+    {n:"k",d:"Detection threshold multiplier"},
+    {n:"PC1,PC2",d:"Top 2 principal components"},
+    {n:"μₖ",d:"K-means cluster centroid"},
+    {n:"ISI",d:"Inter-spike interval"},
+    {n:"L-ratio",d:"Cluster isolation quality"},
+  ],
+  run:function(p){
+    const N=Math.min(p.ss_N,4),dur=p.ss_duration,snr=p.ss_snr,rate=p.ss_rate;
+    const Fs=30000,noiseAmp=1/Math.pow(10,snr/20);
+    const colors_=['#4f8ef7','#f76b4f','#00d4aa','#c084fc'];
+    const templates=Array.from({length:N},(_,k)=>{
+      const W=Array.from({length:40},(_,i)=>{
+        const t=(i-10)/Fs*1000;const phase=k*Math.PI/3;
+        return (k+1)*0.8*(Math.exp(-t*t/0.15)*Math.sin(2*Math.PI*(0.5+k*0.15)*t+phase));
+      });
+      return W;
+    });
+    const recording=new Float32Array(dur*Fs);
+    for(let i=0;i<recording.length;i++)recording[i]=(Math.random()-0.5)*2*noiseAmp*2;
+    const spikeTimes=[];
+    for(let k=0;k<N;k++){
+      const spk=[];let t=Math.floor(Math.random()*Fs/rate);
+      while(t<dur*Fs-50){spk.push(t);t+=Math.floor(Fs/rate*(0.5+Math.random()));} 
+      spikeTimes.push(spk);
+      spk.forEach(st=>{templates[k].forEach((v,i)=>{if(st+i<recording.length)recording[st+i]+=v;});});
+    }
+    const thresh=4*0.6745*noiseAmp;
+    const detected=[];
+    for(let i=20;i<recording.length-50;i++){if(recording[i]>thresh&&recording[i]>recording[i-1]&&recording[i]>recording[i+1]){detected.push(i);i+=20;}}
+    const waveforms=detected.map(idx=>Array.from({length:40},(_,j)=>recording[idx+j-5]||0));
+    const mean=waveforms[0]?.map((_,j)=>waveforms.reduce((s,w)=>s+w[j],0)/waveforms.length)||[];
+    const pc1scores=waveforms.map(w=>w.reduce((s,v,j)=>s+v*Math.cos(j/40*Math.PI*2),0));
+    const pc2scores=waveforms.map(w=>w.reduce((s,v,j)=>s+v*Math.sin(j/40*Math.PI*2),0));
+    const tAxis=Array.from({length:40},(_,i)=>parseFloat(((i-5)/Fs*1000).toFixed(3)));
+    return{ts:tAxis,series:templates.map((t,k)=>({label:`Unit ${k+1} template`,data:t.map(v=>parseFloat(v.toFixed(4))),color:colors_[k]})),
+      metrics:[
+        {label:"Detected spikes",val:detected.length,cls:"green"},
+        {label:"True spikes",val:spikeTimes.reduce((s,a)=>s+a.length,0),cls:"blue"},
+        {label:"N units",val:N,cls:""},
+        {label:"SNR (dB)",val:snr,cls:"purple"},
+      ],phase:{x:pc1scores.slice(0,500).map(v=>parseFloat(v.toFixed(3))),y:pc2scores.slice(0,500).map(v=>parseFloat(v.toFixed(3))),xlabel:"PC1",ylabel:"PC2"}};
+  }
+},
+
+}; // END ALGOS
+
+/* ============================================================
+   RENDERING ENGINE
+   ============================================================ */
+
+let currentChart=null,currentPhaseChart=null;
+
+function loadAlgo(id, btn){
+  document.querySelectorAll('.algo-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const algo=ALGOS[id];
+  if(!algo)return;
+  const tag=`<span class="sim-tag ${algo.tag}">${algo.tagLabel}</span>`;
+  const paramsHTML=algo.params.map(pm=>`
+    <div class="param-item">
+      <div class="param-label">
+        <span>${pm.label}</span>
+        <span class="param-val" id="val_${pm.id}">${pm.val}</span>
+      </div>
+      <input type="range" min="${pm.min}" max="${pm.max}" step="${pm.step}" value="${pm.val}" 
+        oninput="document.getElementById('val_${pm.id}').textContent=parseFloat(this.value).toFixed(this.step<0.01?4:this.step<0.1?3:this.step<1?2:1);document.getElementById('num_${pm.id}').value=this.value"
+        id="range_${pm.id}">
+      <input type="number" min="${pm.min}" max="${pm.max}" step="${pm.step}" value="${pm.val}" id="num_${pm.id}"
+        onchange="document.getElementById('range_${pm.id}').value=this.value;document.getElementById('val_${pm.id}').textContent=parseFloat(this.value).toFixed(this.step<0.01?4:this.step<0.1?3:this.step<1?2:1)">
+    </div>`).join('');
+  const pdHTML=algo.paramDescs?`<div class="param-desc-grid">${algo.paramDescs.map(pd=>`<div class="param-desc-row"><span class="pname">${pd.n}</span><span class="pdesc">${pd.d}</span></div>`).join('')}</div>`:'';
+  const hasPhase=true;
+  document.getElementById('main-area').innerHTML=`
+    <div class="sim-card">
+      <div class="sim-header">
+        <div>
+          <div class="sim-title">${algo.title}</div>
+        </div>
+        ${tag}
+      </div>
+      <p class="desc-text">${algo.desc}</p>
+      <div class="eq-box"><div class="eq-label">Governing equations</div>${algo.equations}</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin:0.5rem 0 0.25rem;letter-spacing:0.06em;text-transform:uppercase">Parameter glossary</div>
+      ${pdHTML}
+      <hr class="section-divider">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;letter-spacing:0.06em;text-transform:uppercase">Simulation parameters</div>
+      <div class="params-grid">${paramsHTML}</div>
+      <div class="controls-row">
+        <button class="run-btn" onclick="runSim('${id}')">▶ Run Simulation</button>
+        <button class="reset-btn" onclick="loadAlgo('${id}',null)">↺ Reset</button>
+        <span class="status-bar" id="status-bar">Ready</span>
+      </div>
+      <div id="metrics-row" class="metrics-row" style="display:none"></div>
+      <div class="plot-area" id="plot-main" style="display:none">
+        <div class="plot-title">Time-series output</div>
+        <div class="plot-wrap" style="height:280px"><canvas id="chart-main" role="img" aria-label="Simulation time series output"></canvas></div>
+      </div>
+      <div class="dual-plot" id="phase-panel" style="display:none">
+        <div class="plot-area">
+          <div class="plot-title" id="phase-title">Phase portrait</div>
+          <div class="plot-wrap" style="height:220px"><canvas id="chart-phase" role="img" aria-label="Phase portrait"></canvas></div>
+        </div>
+        <div class="plot-area">
+          <div class="plot-title">Signal distribution</div>
+          <div class="plot-wrap" style="height:220px"><canvas id="chart-hist" role="img" aria-label="Value distribution histogram"></canvas></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getParams(id){
+  const algo=ALGOS[id];
+  const p={};
+  algo.params.forEach(pm=>{
+    const el=document.getElementById('range_'+pm.id);
+    p[pm.id]=parseFloat(el?el.value:pm.val);
+  });
+  return p;
+}
+
+function runSim(id){
+  const status=document.getElementById('status-bar');
+  status.textContent='Running...';status.className='status-bar running';
+  setTimeout(()=>{
+    try{
+      const p=getParams(id);
+      const result=ALGOS[id].run(p);
+      renderResult(result,ALGOS[id]);
+      status.textContent='Done ✓';status.className='status-bar done';
+    }catch(e){
+      status.textContent='Error: '+e.message;status.className='status-bar';
+      console.error(e);
+    }
+  },50);
+}
+
+function destroyCharts(){
+  if(currentChart){currentChart.destroy();currentChart=null;}
+  if(currentPhaseChart){currentPhaseChart.destroy();currentPhaseChart=null;}
+  if(window._histChart){window._histChart.destroy();window._histChart=null;}
+}
+
+function renderResult(result, algo){
+  destroyCharts();
+  const monochromeColors=['#ffffff','#d9d9d9','#a8a8a8','#7a7a7a'];
+  const colorForSeries=index=>monochromeColors[index % monochromeColors.length];
+  // Metrics
+  const mRow=document.getElementById('metrics-row');
+  mRow.style.display='flex';
+  mRow.innerHTML=result.metrics.map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-val ${m.cls||''}">${m.val}</div></div>`).join('');
+  // Time series chart
+  const plotMain=document.getElementById('plot-main');
+  plotMain.style.display='block';
+  const maxPts=600;
+  const step=Math.max(1,Math.floor(result.ts.length/maxPts));
+  const ts=result.ts.filter((_,i)=>i%step===0);
+  const datasets=result.series.map((s,index)=>({
+    label:s.label,
+    data:s.data.filter((_,i)=>i%step===0),
+    borderColor:colorForSeries(index),backgroundColor:'transparent',
+    borderWidth:1.2,pointRadius:0,tension:0.1
+  }));
+  const xLabel=result.xLabel||'Time';
+  currentChart=new Chart(document.getElementById('chart-main'),{
+    type:'line',data:{labels:ts,datasets},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
+      plugins:{legend:{display:true,labels:{color:'#7a8799',font:{size:11},boxWidth:12}}},
+      scales:{
+        x:{ticks:{color:'#3a4455',maxTicksLimit:8,font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},title:{display:true,text:xLabel,color:'#3a4455',font:{size:11}}},
+        y:{ticks:{color:'#3a4455',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},title:{display:true,text:'Value',color:'#3a4455',font:{size:11}}}
+      }}
+  });
+  // Phase portrait + histogram
+  const phasePanel=document.getElementById('phase-panel');
+  if(result.phase&&result.phase.x&&result.phase.x.length>2){
+    phasePanel.style.display='grid';
+    const step2=Math.max(1,Math.floor(result.phase.x.length/400));
+    const phaseXs=result.phase.x.filter((_,i)=>i%step2===0);
+    const phaseYs=result.phase.y.filter((_,i)=>i%step2===0);
+    const phasePts=phaseXs.map((v,i)=>({x:v,y:phaseYs[i]}));
+    document.getElementById('phase-title').textContent=`Phase: ${result.phase.xlabel} vs ${result.phase.ylabel}`;
+    currentPhaseChart=new Chart(document.getElementById('chart-phase'),{
+      type:'scatter',data:{datasets:[{label:'Trajectory',data:phasePts,borderColor:colorForSeries(0),backgroundColor:'transparent',borderWidth:0.8,pointRadius:0.8,showLine:true}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:200},
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{ticks:{color:'#3a4455',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},title:{display:true,text:result.phase.xlabel,color:'#3a4455',font:{size:11}}},
+          y:{ticks:{color:'#3a4455',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},title:{display:true,text:result.phase.ylabel,color:'#3a4455',font:{size:11}}}
+        }}
+    });
+    // Histogram of primary signal
+    const vals=result.series[0].data;
+    const mn=Math.min(...vals),mx=Math.max(...vals);
+    const bins=30,bw=((mx-mn)/bins)||1;
+    const hist=new Array(bins).fill(0);
+    vals.forEach(v=>{const b=Math.min(Math.floor((v-mn)/bw),bins-1);hist[b]++;});
+    const binLabels=Array.from({length:bins},(_,i)=>(mn+i*bw).toFixed(2));
+    window._histChart=new Chart(document.getElementById('chart-hist'),{
+      type:'bar',data:{labels:binLabels,datasets:[{label:'Distribution',data:hist,backgroundColor:colorForSeries(1)+'55',borderColor:colorForSeries(1),borderWidth:1}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:200},
+        plugins:{legend:{display:false}},
+        scales:{x:{ticks:{color:'#3a4455',font:{size:9},maxTicksLimit:6},grid:{display:false}},y:{ticks:{color:'#3a4455',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}
+      }
+    });
+  } else {phasePanel.style.display='none';}
+}
+
+// Load first algorithm by default
+window.onload=()=>{
+  loadAlgo('epileptor',document.querySelector('[data-algo="epileptor"]'));
+  setTimeout(()=>runSim('epileptor'),300);
+};
+</script>
+</body>
+</html>
