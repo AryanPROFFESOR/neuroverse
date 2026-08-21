@@ -5,26 +5,25 @@
 
 /* ── DESIGN TOKENS ────────────────────────────────────────── */
 :root {
-  /* Focus-driven palette, matching the Ψ Mind Space's deep near-black base —
-     sky blue (focus/analysis) + sage green (mental restoration) + warm neutrals (clarity) */
-  --clr-bg:         #060A0F;
-  --clr-bg-2:       #0A1017;
-  --clr-bg-3:       #0A1017;
-  --clr-surface:    #0D141C;
-  --clr-surface-2:  #111A23;
-  --clr-border:     rgba(226,231,237,0.08);
-  --clr-border-hover: rgba(226,231,237,0.18);
+  /* White / Red / Brown editorial palette */
+  --clr-bg:         #FFFFFF;
+  --clr-bg-2:       #FBF7F3;
+  --clr-bg-3:       #FBF7F3;
+  --clr-surface:    #FFFFFF;
+  --clr-surface-2:  #F6EFE7;
+  --clr-border:     rgba(60,32,20,0.12);
+  --clr-border-hover: rgba(60,32,20,0.28);
 
-  --clr-accent:     #4FA3E3;   /* deep sky blue — focus & analytical work */
-  --clr-accent-2:   #7FC29B;   /* soft sage green — restorative, working memory */
-  --clr-accent-3:   #7FC29B;
-  --clr-neon:       #4FA3E3;
-  --clr-warm:       #CFC7B8;   /* warm off-white — decision-fatigue-free neutral */
-  --clr-danger:     #E2574C;
+  --clr-accent:     #B3271E;   /* deep red — primary accent / bars */
+  --clr-accent-2:   #7A4A2B;   /* warm brown — secondary accent / bars */
+  --clr-accent-3:   #7A4A2B;
+  --clr-neon:       #B3271E;
+  --clr-warm:       #7A4A2B;
+  --clr-danger:     #8C1C13;
 
-  --clr-text:       #F3F1EA;
-  --clr-text-2:     #C6CBD1;
-  --clr-text-3:     #838A93;
+  --clr-text:       #241A14;
+  --clr-text-2:     #574238;
+  --clr-text-3:     #8A776C;
 
   /* Typography */
   --font-display:   'Space Grotesk', sans-serif;
@@ -64,8 +63,8 @@ body {
   font-family: var(--font-body);
   background-color: var(--clr-bg);
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(79,163,227,0.16) 1px, transparent 1.6px),
-    radial-gradient(circle at 1px 1px, rgba(127,194,155,0.10) 1px, transparent 1.6px);
+    radial-gradient(circle at 1px 1px, rgba(179,39,30,0.09) 1px, transparent 1.6px),
+    radial-gradient(circle at 1px 1px, rgba(122,74,43,0.08) 1px, transparent 1.6px);
   background-size: 68px 68px, 44px 44px;
   background-position: 0 0, 22px 22px;
   background-attachment: fixed, fixed;
@@ -118,20 +117,50 @@ body.cursor-active .cursor-ring { width: 60px; height: 60px; border-color: var(-
   transition: opacity 0.6s var(--ease-out), visibility 0.6s;
 }
 .loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.loader__inner { text-align: center; }
-.loader__neuro  { width: 120px; margin: 0 auto var(--space-lg); }
-.loader__brain-svg { width: 100%; animation: brain-rotate 8s linear infinite; }
-.loader__pulse {
-  fill: none; stroke: var(--clr-text-2); stroke-width: 1;
-  opacity: 0; animation: pulse-ring 2s ease-out infinite;
+.loader__inner {
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
 }
-.loader__pulse--2 { animation-delay: 0.5s; stroke: var(--clr-text-2); }
-.loader__pulse--3 { animation-delay: 1s;   stroke: var(--clr-text-2); }
-.loader__synapse { stroke: var(--clr-text-2); stroke-width: 0.8; opacity: 0.4; animation: synapse-flicker 1.5s ease-in-out infinite alternate; }
-.loader__node { fill: var(--clr-text); animation: node-glow 1.5s ease-in-out infinite alternate; }
-.loader__text  { font-family: var(--font-mono); font-size: 0.75rem; color: var(--clr-text-2); letter-spacing: 0.2em; margin-bottom: var(--space-md); }
-.loader__bar   { width: 200px; height: 2px; background: var(--clr-surface-2); border-radius: 2px; margin: 0 auto; overflow: hidden; }
-.loader__bar-fill { height: 100%; background: var(--clr-text-2); border-radius: 2px; width: 0; transition: width 0.1s linear; }
+.loader__logo {
+  width: 150px; height: 150px;
+  object-fit: contain;
+  animation: heartbeat 1.35s ease-in-out infinite;
+  filter: drop-shadow(0 0 26px rgba(179,39,30,0.32));
+}
+.loader__typing {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  color: var(--clr-text);
+  min-height: 1.6em;
+}
+.loader__cursor {
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--clr-accent);
+  font-weight: 700;
+  animation: cursor-blink 0.9s steps(1) infinite;
+}
+.loader__enter {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  padding: 13px 30px;
+  border-radius: 999px;
+  border: 1px solid var(--clr-accent);
+  background: var(--clr-accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out), background 0.25s ease, border-color 0.25s ease;
+}
+.loader__enter.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.loader__enter:hover { background: var(--clr-accent-2); border-color: var(--clr-accent-2); transform: translateY(-2px); }
 
 /* ── NAVIGATION ────────────────────────────────────────────── */
 .nav {
@@ -143,7 +172,7 @@ body.cursor-active .cursor-ring { width: 60px; height: 60px; border-color: var(-
   transition: background 0.4s, backdrop-filter 0.4s, border-bottom 0.4s;
 }
 .nav.scrolled {
-  background: rgba(6, 8, 16, 0.85);
+  background: rgba(255,255,255,0.88);
   backdrop-filter: blur(24px) saturate(180%);
   border-bottom: 1px solid var(--clr-border);
 }
@@ -811,7 +840,7 @@ body.cursor-active .cursor-ring { width: 60px; height: 60px; border-color: var(-
 @media (max-width: 768px) {
   :root { --space-xl: 2rem; --space-2xl: 4rem; }
   .nav { padding: 0 var(--space-lg); }
-  .nav__links { display: none; position: fixed; inset: 0; background: rgba(6,8,16,0.98); backdrop-filter: blur(24px); flex-direction: column; align-items: center; justify-content: center; gap: var(--space-xl); }
+  .nav__links { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.97); backdrop-filter: blur(24px); flex-direction: column; align-items: center; justify-content: center; gap: var(--space-xl); }
   .nav__links.open { display: flex; }
   .nav__link { font-size: 1.2rem; }
   .nav__toggle { display: flex; z-index: 101; }

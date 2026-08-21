@@ -41,13 +41,13 @@ function initMatrix() {
 }
 
 function drawMatrix() {
-  mCtx.fillStyle = 'rgba(0,5,8,0.05)';
+  mCtx.fillStyle = 'rgba(255,255,255,0.05)';
   mCtx.fillRect(0, 0, mW, mH);
-  mCtx.fillStyle = '#00f5d4';
+  mCtx.fillStyle = '#B3271E';
   mCtx.font = '13px "IBM Plex Mono"';
   for (let i = 0; i < drops.length; i++) {
     const char = CHARS[Math.floor(Math.random() * CHARS.length)];
-    mCtx.fillStyle = `rgba(0,245,212,${Math.random() * 0.6 + 0.2})`;
+    mCtx.fillStyle = `rgba(179,39,30,${Math.random() * 0.6 + 0.2})`;
     mCtx.fillText(char, i * 16, drops[i] * 16);
     if (drops[i] * 16 > mH && Math.random() > 0.975) drops[i] = 0;
     drops[i]++;
@@ -77,7 +77,7 @@ if (philoCanvas) {
     // Outer atmospheric glow
     for (let i = 5; i > 0; i--) {
       const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, W/2 * (1 + i*0.15));
-      grad.addColorStop(0, `rgba(0,245,212,${0.04 - i*0.006})`);
+      grad.addColorStop(0, `rgba(179,39,30,${0.04 - i*0.006})`);
       grad.addColorStop(0.5,`rgba(124,58,237,${0.02 - i*0.003})`);
       grad.addColorStop(1,  'transparent');
       ctx.beginPath(); ctx.arc(cx, cy, W/2*(1+i*0.15), 0, Math.PI*2);
@@ -89,12 +89,12 @@ if (philoCanvas) {
     // Core sphere
     const sphereGrad = ctx.createRadialGradient(cx - R*0.2, cy - R*0.2, R*0.05, cx, cy, R);
     sphereGrad.addColorStop(0,  'rgba(220,255,250,0.95)');
-    sphereGrad.addColorStop(0.3,'rgba(0,245,212,0.7)');
+    sphereGrad.addColorStop(0.3,'rgba(179,39,30,0.7)');
     sphereGrad.addColorStop(0.7,'rgba(124,58,237,0.4)');
-    sphereGrad.addColorStop(1,  'rgba(0,0,50,0.1)');
+    sphereGrad.addColorStop(1,  'rgba(122,74,43,0.12)');
     ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2);
     ctx.fillStyle = sphereGrad;
-    ctx.shadowBlur = 40; ctx.shadowColor = 'rgba(0,245,212,0.6)';
+    ctx.shadowBlur = 40; ctx.shadowColor = 'rgba(179,39,30,0.6)';
     ctx.fill(); ctx.shadowBlur = 0;
 
     // Rotating ellipses (consciousness rings)
@@ -107,7 +107,7 @@ if (philoCanvas) {
       ctx.scale(1, tilt);
       ctx.beginPath();
       ctx.arc(0, 0, R * (1.05 + k*0.08), 0, Math.PI*2);
-      ctx.strokeStyle = `rgba(0,245,212,${0.25 - k*0.05})`;
+      ctx.strokeStyle = `rgba(179,39,30,${0.25 - k*0.05})`;
       ctx.lineWidth = 1.5 - k*0.2;
       ctx.stroke();
       ctx.restore();
@@ -134,7 +134,7 @@ if (philoCanvas) {
         ctx.beginPath();
         ctx.moveTo(sx, sy);
         ctx.lineTo(nearX, nearY);
-        ctx.strokeStyle = `rgba(0,245,212,0.15)`;
+        ctx.strokeStyle = `rgba(179,39,30,0.15)`;
         ctx.lineWidth = 0.8;
         ctx.stroke();
       }
@@ -149,7 +149,7 @@ if (philoCanvas) {
         const px = cx + r * Math.cos(a);
         const py = cy + r * Math.sin(a);
         ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(0,245,212,${0.4 - k*0.08})`;
+        ctx.fillStyle = `rgba(179,39,30,${0.4 - k*0.08})`;
         ctx.fill();
       }
     }
@@ -165,13 +165,13 @@ if (philoCanvas) {
 
 // ── PHILOSOPHY CARDS ────────────────────────────────────────
 const PHILO_CARDS = [
-  { icon:'🧠', q:'Can matter experience anything?', hint:'The hard problem of consciousness — why does physical brain activity give rise to subjective experience?', color:'#00f5d4' },
-  { icon:'🎲', q:'Is free will an illusion?', hint:'Libet\'s experiments show neural readiness potential precedes conscious decision. Are we passengers in our own brains?', color:'#7c3aed' },
-  { icon:'🪞', q:'What makes you the same person across time?', hint:'Ship of Theseus applied to neurons: 90% of your atoms replace over years. What is the continuous self?', color:'#f0abfc' },
-  { icon:'⏳', q:'Does the present moment actually exist?', hint:'Physics says the "now" is observer-relative. The specious present of consciousness spans ~3 seconds. What is "now"?', color:'#fde68a' },
+  { icon:'🧠', q:'Can matter experience anything?', hint:'The hard problem of consciousness — why does physical brain activity give rise to subjective experience?', color:'#B3271E' },
+  { icon:'🎲', q:'Is free will an illusion?', hint:'Libet\'s experiments show neural readiness potential precedes conscious decision. Are we passengers in our own brains?', color:'#7A4A2B' },
+  { icon:'🪞', q:'What makes you the same person across time?', hint:'Ship of Theseus applied to neurons: 90% of your atoms replace over years. What is the continuous self?', color:'#8C1C13' },
+  { icon:'⏳', q:'Does the present moment actually exist?', hint:'Physics says the "now" is observer-relative. The specious present of consciousness spans ~3 seconds. What is "now"?', color:'#C77B3B' },
   { icon:'🌊', q:'Is consciousness a spectrum or binary?', hint:'Integrated Information Theory (IIT) gives even simple systems some phi. Is a thermostat conscious?', color:'#34d399' },
   { icon:'🌀', q:'Could a perfect simulation know it\'s simulated?', hint:'If physics rules are self-consistent inside, no experiment could distinguish simulation from base reality.', color:'#f472b6' },
-  { icon:'👁','q':'Why is there something rather than nothing?', hint:'Leibniz\'s question. Parfit called it the "most baffling question in metaphysics." No answer. Only awe.', color:'#818cf8' },
+  { icon:'👁','q':'Why is there something rather than nothing?', hint:'Leibniz\'s question. Parfit called it the "most baffling question in metaphysics." No answer. Only awe.', color:'#8C1C13' },
   { icon:'🔮', q:'What is the self?', hint:'Buddhism: no fixed self. Neuroscience: predictive model. Narrative theory: the story you tell about yourself.', color:'#fb923c' },
 ];
 
@@ -214,12 +214,12 @@ if (qualiaCanvas) {
     }
     // White center
     const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,R*0.7);
-    grad.addColorStop(0,'rgba(0,5,8,0.95)');
-    grad.addColorStop(1,'rgba(0,5,8,0)');
+    grad.addColorStop(0,'rgba(255,255,255,0.95)');
+    grad.addColorStop(1,'rgba(255,255,255,0)');
     ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
     ctx.fillStyle=grad;ctx.fill();
     // Center question
-    ctx.fillStyle = '#00f5d4';
+    ctx.fillStyle = '#B3271E';
     ctx.font = '700 18px "Playfair Display"';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -340,11 +340,11 @@ const brainName   = document.getElementById('brainName');
 const brainDesc   = document.getElementById('brainDesc');
 
 const BRAIN_REGIONS = [
-  { label:'Prefrontal Cortex', x:0.50, y:0.22, r:55, color:'#00f5d4',
+  { label:'Prefrontal Cortex', x:0.50, y:0.22, r:55, color:'#B3271E',
     desc:'The "CEO" of the brain. Executive function, decision-making, sense of self, future planning, and — crucially — the feeling of being in control. Damage here yields alien hand syndrome, personality dissolution, and the disappearance of the sense of agency.' },
   { label:'Amygdala', x:0.38, y:0.52, r:28, color:'#f472b6',
     desc:'The alarm system. Processes fear, threat, salience. Active in anxiety, PTSD, and — fascinatingly — in aesthetic awe. The line between terror and sublimity is thin. Philosophical implication: our emotional reactions may define what we call reality.' },
-  { label:'Hippocampus', x:0.62, y:0.55, r:32, color:'#818cf8',
+  { label:'Hippocampus', x:0.62, y:0.55, r:32, color:'#8C1C13',
     desc:'Memory\'s index. Without it, you cannot form new explicit memories. Patient H.M. lived forever in the present. The philosophical puzzle: if memory constitutes identity, what is a self without one? Is each moment a new self?' },
   { label:'Default Mode Network', x:0.50, y:0.36, r:44, color:'#fbbf24',
     desc:'Active when you\'re doing nothing. Mind-wandering, self-referential thought, theory of mind, moral reasoning, and creative insight. Some theorize this is where "you" live most of the time. It\'s suppressed during focused tasks.' },
@@ -377,13 +377,13 @@ if (brainCanvas) {
     ctx.globalAlpha = 0.06;
     ctx.beginPath();
     ctx.ellipse(W/2, H*0.45, W*0.4, H*0.42, 0, 0, Math.PI*2);
-    ctx.fillStyle = '#00f5d4';
+    ctx.fillStyle = '#B3271E';
     ctx.fill();
     ctx.globalAlpha = 1;
     ctx.restore();
 
     // Draw faint grid
-    ctx.strokeStyle = 'rgba(0,245,212,0.04)';
+    ctx.strokeStyle = 'rgba(179,39,30,0.04)';
     ctx.lineWidth = 1;
     for (let gx = 0; gx < W; gx += 30) {
       ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke();
@@ -401,7 +401,7 @@ if (brainCanvas) {
         if (dist < 200) {
           const alpha = (1 - dist/200) * 0.12 * (1 + 0.3*Math.sin(t + i));
           ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
-          ctx.strokeStyle = `rgba(0,245,212,${alpha})`;
+          ctx.strokeStyle = `rgba(179,39,30,${alpha})`;
           ctx.lineWidth = 0.8;
           ctx.stroke();
         }
@@ -471,6 +471,30 @@ if (brainCanvas) {
 }
 
 // ── SCROLL REVEAL ────────────────────────────────────────────
+// Alternate left/right slide-in for top-level philosophy sections
+(function alternatePhiloSectionReveal() {
+  const skip = ['philo-hero'];
+  let i = 0;
+  document.querySelectorAll('body > section').forEach(sec => {
+    if (skip.some(cls => sec.classList.contains(cls))) return;
+    sec.style.opacity = '0';
+    sec.style.transform = i % 2 === 0 ? 'translateX(-50px)' : 'translateX(50px)';
+    sec.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+    const target = sec;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          target.style.opacity = '1';
+          target.style.transform = 'none';
+          io.unobserve(target);
+        }
+      });
+    }, { threshold: 0.1 });
+    io.observe(sec);
+    i++;
+  });
+})();
+
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) e.target.classList.add('visible');
@@ -505,7 +529,7 @@ document.getElementById('randomBtn')?.addEventListener('click', () => {
   const display = document.createElement('div');
   display.style.cssText = `
     position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-    background:rgba(0,13,20,0.97); border:1px solid #00f5d4;
+    background:rgba(251,240,233,0.97); border:1px solid #B3271E;
     border-radius:20px; padding:3rem; max-width:560px; width:90%;
     z-index:9000; font-family:'Playfair Display',serif;
     color:#e0f2fe; text-align:center;
@@ -516,8 +540,8 @@ document.getElementById('randomBtn')?.addEventListener('click', () => {
     <p style="font-size:1.4rem;font-style:italic;margin-bottom:1.5rem">"${q.q}"</p>
     <p style="font-size:0.9rem;color:#7dd3fc;line-height:1.8;margin-bottom:2rem">${q.hint}</p>
     <button onclick="this.parentElement.remove()" style="
-      padding:10px 24px; background:transparent; border:1px solid #00f5d4;
-      color:#00f5d4; border-radius:999px; font-family:'IBM Plex Mono',monospace;
+      padding:10px 24px; background:transparent; border:1px solid #B3271E;
+      color:#B3271E; border-radius:999px; font-family:'IBM Plex Mono',monospace;
       font-size:0.75rem; letter-spacing:0.1em; cursor:none;
     ">Close</button>
   `;

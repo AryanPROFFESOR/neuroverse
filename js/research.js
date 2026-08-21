@@ -243,8 +243,8 @@ if (researchCanvas && window.THREE) {
   geometry.setAttribute('position', new THREE.BufferAttribute(position, 3));
 
   const colors = new Float32Array(particleCount * 3);
-  const skyBlue = new THREE.Color(0x4FA3E3);
-  const sage    = new THREE.Color(0x7FC29B);
+  const skyBlue = new THREE.Color(0xB3271E);
+  const sage    = new THREE.Color(0x7A4A2B);
   for (let i = 0; i < particleCount; i++) {
     const c = (i % 2 === 0) ? skyBlue : sage;
     colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
@@ -256,7 +256,7 @@ if (researchCanvas && window.THREE) {
     transparent: true,
     opacity: 0.85,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
+    blending: THREE.NormalBlending,
     sizeAttenuation: true,
     vertexColors: true,
   });

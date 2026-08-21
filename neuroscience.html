@@ -28,7 +28,7 @@
       font-weight: 800; line-height: .92; letter-spacing: -.03em;
       margin-bottom: var(--space-lg);
     }
-    .neuro-hero__title em { font-style: italic; color: #7FC29B; }
+    .neuro-hero__title em { font-style: italic; color: #7A4A2B; }
     /* Topic sections */
     .neuro-topic-nav {
       max-width: var(--max-width); margin: 0 auto;
@@ -55,7 +55,7 @@
       font-weight: 800; letter-spacing: -.02em; line-height: 1.1;
       margin-bottom: var(--space-sm);
     }
-    .neuro-topic-title em { color: #7FC29B; font-style: italic; }
+    .neuro-topic-title em { color: #7A4A2B; font-style: italic; }
     .neuro-topic-subtitle { font-size: 1rem; color: var(--clr-text-2); font-style: italic; }
     /* Article cards */
     .neuro-articles {
@@ -70,14 +70,14 @@
     }
     .neuro-article-card::before {
       content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-      background: #7FC29B; transform: scaleY(0); transform-origin: top;
+      background: #7A4A2B; transform: scaleY(0); transform-origin: top;
       transition: transform var(--dur-med) var(--ease-out);
     }
     .neuro-article-card:hover { border-color: rgba(127,194,155,.4); transform: translateX(4px); }
     .neuro-article-card:hover::before { transform: scaleY(1); }
     .neuro-article-card__topic {
       font-family: var(--font-mono); font-size: .65rem; letter-spacing: .12em;
-      color: #7FC29B; text-transform: uppercase; margin-bottom: var(--space-xs);
+      color: #7A4A2B; text-transform: uppercase; margin-bottom: var(--space-xs);
     }
     .neuro-article-card__title {
       font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;
@@ -101,7 +101,7 @@
     }
     .neuro-insight-panel__label {
       font-family: var(--font-mono); font-size: .68rem; letter-spacing: .2em;
-      color: #7FC29B; text-transform: uppercase; margin-bottom: var(--space-md);
+      color: #7A4A2B; text-transform: uppercase; margin-bottom: var(--space-md);
     }
     .neuro-insight-panel__text {
       font-size: 1.1rem; color: var(--clr-text); font-style: italic;
@@ -435,7 +435,7 @@
                        + Math.sin(x * 0.02 + t * 1.4 + row) * 8;
             x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
           }
-          ctx.strokeStyle = `rgba(127,194,155,${0.04 + row * 0.01})`;
+          ctx.strokeStyle = `rgba(122,74,43,${0.05 + row * 0.012})`;
           ctx.lineWidth = 1;
           ctx.stroke();
         }
@@ -446,5 +446,6 @@
       resize(); draw();
     }
   </script>
+  <script src="js/particles-margin.js"></script>
 </body>
 </html>

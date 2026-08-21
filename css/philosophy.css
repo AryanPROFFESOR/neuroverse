@@ -7,15 +7,15 @@
 
 /* ── PHILOSOPHY OVERRIDES ──────────────────────────────────── */
 :root {
-  --philo-bg:      #000508;
-  --philo-bg-2:    #000d14;
-  --philo-accent:  #00f5d4;
-  --philo-accent-2:#7c3aed;
-  --philo-pink:    #f0abfc;
-  --philo-gold:    #fde68a;
-  --philo-text:    #e0f2fe;
-  --philo-text-2:  #7dd3fc;
-  --philo-border:  rgba(0,245,212,0.15);
+  --philo-bg:      #FFFFFF;
+  --philo-bg-2:    #FBF0E9;
+  --philo-accent:  #B3271E;
+  --philo-accent-2:#7A4A2B;
+  --philo-pink:    #8C1C13;
+  --philo-gold:    #C77B3B;
+  --philo-text:    #241A14;
+  --philo-text-2:  #6B4A38;
+  --philo-border:  rgba(179,39,30,0.18);
 }
 
 /* ── RESET FOR PHILO ────────────────────────────────────────── */
@@ -44,8 +44,8 @@
     0deg,
     transparent 0px,
     transparent 2px,
-    rgba(0,245,212,0.015) 2px,
-    rgba(0,245,212,0.015) 4px
+    rgba(179,39,30,0.015) 2px,
+    rgba(179,39,30,0.015) 4px
   );
 }
 
@@ -89,7 +89,7 @@
   height: 70px;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 3rem;
-  background: rgba(0,5,8,0.7);
+  background: rgba(255,255,255,0.7);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--philo-border);
   z-index: 100;
@@ -107,7 +107,7 @@
   font-size: 1.5rem;
   font-style: italic;
   color: var(--philo-accent);
-  text-shadow: 0 0 30px rgba(0,245,212,0.5);
+  text-shadow: 0 0 30px rgba(179,39,30,0.5);
 }
 .philo-nav__links {
   display: flex; gap: 2rem;
@@ -159,7 +159,7 @@
 .philo-title-line--italic {
   font-style: italic;
   color: var(--philo-accent);
-  text-shadow: 0 0 60px rgba(0,245,212,0.4);
+  text-shadow: 0 0 60px rgba(179,39,30,0.4);
 }
 
 /* Glitch effect on title */
@@ -175,7 +175,7 @@
   clip-path: inset(0 0 0 0);
 }
 .philo-title-line[data-glitch]::after {
-  color: rgba(0,255,200,0.4);
+  color: rgba(179,39,30,0.4);
   animation: glitch-2 8s infinite;
   animation-delay: 0.05s;
 }
@@ -199,8 +199,8 @@
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   color: var(--philo-accent);
-  background: rgba(0,245,212,0.06);
-  border: 1px solid rgba(0,245,212,0.2);
+  background: rgba(179,39,30,0.06);
+  border: 1px solid rgba(179,39,30,0.2);
   padding: 6px 14px;
   border-radius: 999px;
   white-space: nowrap;
@@ -243,12 +243,12 @@
   background: var(--philo-accent);
   color: #000;
   font-weight: 600;
-  box-shadow: 0 0 30px rgba(0,245,212,0.3);
+  box-shadow: 0 0 30px rgba(179,39,30,0.3);
   animation: neon-pulse 3s ease-in-out infinite;
 }
 .philo-btn--primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 0 60px rgba(0,245,212,0.6);
+  box-shadow: 0 0 60px rgba(179,39,30,0.6);
 }
 .philo-btn__icon { font-size: 1.1rem; }
 .philo-btn--ghost {
@@ -258,8 +258,8 @@
 }
 .philo-btn--ghost:hover { border-color: var(--philo-accent); color: var(--philo-accent); }
 .philo-btn--small { padding: 10px 20px; font-size: 0.75rem; border-radius: 8px; }
-.philo-btn--yes { background: rgba(0,245,212,0.1); border: 1px solid var(--philo-accent); color: var(--philo-accent); }
-.philo-btn--no  { background: rgba(167,58,237,0.1); border: 1px solid var(--philo-accent-2); color: var(--philo-pink); }
+.philo-btn--yes { background: rgba(179,39,30,0.1); border: 1px solid var(--philo-accent); color: var(--philo-accent); }
+.philo-btn--no  { background: rgba(122,74,43,0.1); border: 1px solid var(--philo-accent-2); color: var(--philo-pink); }
 
 /* ── SECTION TYPOGRAPHY ────────────────────────────────────── */
 .philo-section-title {
@@ -361,7 +361,7 @@
 }
 .philo-card {
   position: relative;
-  background: rgba(0,13,20,0.8);
+  background: rgba(251,240,233,0.8);
   border: 1px solid var(--philo-border);
   border-radius: 20px;
   padding: 2rem;
@@ -373,11 +373,11 @@
 .philo-card::before {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(0,245,212,0.04), transparent);
+  background: linear-gradient(135deg, rgba(179,39,30,0.04), transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
-.philo-card:hover { transform: translateY(-8px) scale(1.02); border-color: rgba(0,245,212,0.4); }
+.philo-card:hover { transform: translateY(-8px) scale(1.02); border-color: rgba(179,39,30,0.4); }
 .philo-card:hover::before { opacity: 1; }
 .philo-card__icon { font-size: 2.5rem; margin-bottom: 1rem; }
 .philo-card__q {
@@ -425,7 +425,7 @@
 .qualia-demo__buttons { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
 .qualia-response {
   padding: 1.5rem;
-  background: rgba(0,245,212,0.05);
+  background: rgba(179,39,30,0.05);
   border: 1px solid var(--philo-border);
   border-radius: 12px;
   font-size: 0.95rem;
@@ -453,7 +453,7 @@
 }
 .thought-gen__inner { max-width: 800px; margin: 0 auto; }
 .thought-gen__machine {
-  background: rgba(0,13,20,0.9);
+  background: rgba(251,240,233,0.9);
   border: 1px solid var(--philo-border);
   border-radius: 20px;
   padding: 3rem;
@@ -498,12 +498,12 @@
   cursor: none;
 }
 .thought-gen__btn:hover {
-  background: rgba(0,245,212,0.08);
-  box-shadow: 0 0 30px rgba(0,245,212,0.2);
+  background: rgba(179,39,30,0.08);
+  box-shadow: 0 0 30px rgba(179,39,30,0.2);
 }
 .thought-gen__spinner {
   width: 20px; height: 20px;
-  border: 2px solid rgba(0,245,212,0.2);
+  border: 2px solid rgba(179,39,30,0.2);
   border-top-color: var(--philo-accent);
   border-radius: 50%;
   display: none;
@@ -593,7 +593,7 @@
 #brainCanvas { width: 500px; height: 400px; }
 .brain-info {
   flex: 1;
-  background: rgba(0,13,20,0.9);
+  background: rgba(251,240,233,0.9);
   border: 1px solid var(--philo-border);
   border-radius: 16px;
   padding: 2rem;
@@ -655,7 +655,7 @@
 
 /* ── KEYFRAMES (local) ─────────────────────────────────────── */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-@keyframes neon-pulse { 0%,100%{box-shadow:0 0 20px rgba(0,245,212,.2)} 50%{box-shadow:0 0 50px rgba(0,245,212,.5)} }
+@keyframes neon-pulse { 0%,100%{box-shadow:0 0 20px rgba(179,39,30,.2)} 50%{box-shadow:0 0 50px rgba(179,39,30,.5)} }
 @keyframes shimmer { from{background-position:-200% center} to{background-position:200% center} }
 @keyframes spin-slow { from{transform:rotate(0)} to{transform:rotate(360deg)} }
 @keyframes consciousness-wave { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.15)} }

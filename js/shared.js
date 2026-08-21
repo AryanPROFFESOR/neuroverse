@@ -85,6 +85,21 @@ function typewriterEffect(element) {
 
 window.typewriterEffect = typewriterEffect;
 
+// ── ALTERNATING LEFT/RIGHT SECTION REVEAL ────────────────────
+// Top-level page sections slide in from alternating sides as they scroll
+// into view (left, right, left, ...). Hero/canvas-driven sections and any
+// section that already opted into a specific reveal style are left alone.
+(function alternateSectionReveal() {
+  const skip = ['page-hero', 'neuro-hero', 'hero'];
+  let i = 0;
+  document.querySelectorAll('body > section').forEach(sec => {
+    if (skip.some(cls => sec.classList.contains(cls))) return;
+    if (sec.hasAttribute('data-reveal')) return;
+    sec.setAttribute('data-reveal', i % 2 === 0 ? 'left' : 'right');
+    i++;
+  });
+})();
+
 const revealObs = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (!entry.isIntersecting) return;

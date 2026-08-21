@@ -24,27 +24,9 @@
   <!-- LOADING SCREEN -->
   <div class="loader" id="loader">
     <div class="loader__inner">
-      <div class="loader__neuro">
-        <svg viewBox="0 0 200 200" class="loader__brain-svg">
-          <circle class="loader__pulse" cx="100" cy="100" r="80" />
-          <circle class="loader__pulse loader__pulse--2" cx="100" cy="100" r="60" />
-          <circle class="loader__pulse loader__pulse--3" cx="100" cy="100" r="40" />
-          <!-- Neural connections -->
-          <line class="loader__synapse" x1="100" y1="20" x2="180" y2="100"/>
-          <line class="loader__synapse" x1="100" y1="20" x2="20"  y2="100"/>
-          <line class="loader__synapse" x1="20"  y1="100" x2="100" y2="180"/>
-          <line class="loader__synapse" x1="180" y1="100" x2="100" y2="180"/>
-          <line class="loader__synapse" x1="100" y1="20" x2="100" y2="180"/>
-          <line class="loader__synapse" x1="20"  y1="100" x2="180" y2="100"/>
-          <circle class="loader__node" cx="100" cy="20"  r="5"/>
-          <circle class="loader__node" cx="180" cy="100" r="5"/>
-          <circle class="loader__node" cx="100" cy="180" r="5"/>
-          <circle class="loader__node" cx="20"  cy="100" r="5"/>
-          <circle class="loader__node" cx="100" cy="100" r="8"/>
-        </svg>
-      </div>
-      <p class="loader__text">Initializing Neural Network…</p>
-      <div class="loader__bar"><div class="loader__bar-fill" id="loaderBar"></div></div>
+      <img src="assets/logo.png" alt="withinthebrainwitharyan logo" class="loader__logo" />
+      <p class="loader__typing"><span id="loaderTypingText"></span><span class="loader__cursor">|</span></p>
+      <button class="loader__enter" id="loaderEnter" type="button">Enter My Website</button>
     </div>
   </div>
 
@@ -214,5 +196,6 @@
 
   <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
   <script src="js/main.js" type="module"></script>
+  <script src="js/particles-margin.js"></script>
 </body>
 </html>

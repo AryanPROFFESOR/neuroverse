@@ -62,7 +62,7 @@
 /* ── MODAL ─────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(6,8,16,0.85);
+  background: rgba(255,255,255,0.88);
   backdrop-filter: blur(16px);
   z-index: 5000;
   display: flex; align-items: center; justify-content: center;

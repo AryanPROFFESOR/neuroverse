@@ -4,23 +4,44 @@
    ============================================================ */
 
 // ── LOADER ─────────────────────────────────────────────────
-const loader    = document.getElementById('loader');
-const loaderBar = document.getElementById('loaderBar');
-let progress = 0;
-const loadInterval = setInterval(() => {
-  progress += Math.random() * 18;
-  if (progress > 100) progress = 100;
-  loaderBar.style.width = progress + '%';
-  if (progress === 100) {
-    clearInterval(loadInterval);
-    setTimeout(() => {
-      loader.classList.add('hidden');
-      document.body.style.overflow = '';
-      initReveal();
-    }, 400);
-  }
-}, 120);
+const loader        = document.getElementById('loader');
+const loaderTypeEl  = document.getElementById('loaderTypingText');
+const loaderEnterBtn = document.getElementById('loaderEnter');
+
 document.body.style.overflow = 'hidden';
+
+function dismissLoader() {
+  loader.classList.add('hidden');
+  document.body.style.overflow = '';
+  initReveal();
+}
+
+function typeLoaderName() {
+  const text = 'withinthebrainwitharyan';
+  let i = 0;
+  const tick = () => {
+    if (i < text.length) {
+      loaderTypeEl.textContent += text.charAt(i++);
+      setTimeout(tick, 65 + Math.random() * 55);
+    } else {
+      loaderEnterBtn.classList.add('visible');
+      // Fallback auto-dismiss in case the visitor doesn't click.
+      window.__loaderAutoDismiss = setTimeout(dismissLoader, 4200);
+    }
+  };
+  tick();
+}
+
+if (loader && loaderTypeEl && loaderEnterBtn) {
+  loaderEnterBtn.addEventListener('click', () => {
+    clearTimeout(window.__loaderAutoDismiss);
+    dismissLoader();
+  });
+  setTimeout(typeLoaderName, 350);
+} else if (loader) {
+  // No typing UI present on this page — just clear the loader shortly after load.
+  setTimeout(dismissLoader, 500);
+}
 
 // ── CUSTOM CURSOR ───────────────────────────────────────────
 const dot  = document.getElementById('cursorDot');
@@ -103,7 +124,7 @@ if (heroCanvas && window.$3Dmol) {
     .then(data => {
       viewer.addModel(data, 'pdb');
       // Ribbon colored with the site's sky-blue / sage palette instead of a rainbow spectrum
-      viewer.setStyle({}, { cartoon: { colorscheme: { prop: 'resi', gradient: 'linear', min: 0, max: 200, colors: [0x4FA3E3, 0x7FC29B] } } });
+      viewer.setStyle({}, { cartoon: { colorscheme: { prop: 'resi', gradient: 'linear', min: 0, max: 200, colors: [0xB3271E, 0x7A4A2B] } } });
       viewer.zoomTo();
 
       // Shift it slightly right to balance the text
@@ -186,22 +207,22 @@ if (insightCanvas) {
     points1.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
     ctx.strokeStyle = 'rgba(79,163,227,0.9)';
     ctx.lineWidth = 2.5;
-    ctx.shadowBlur = 12; ctx.shadowColor = '#4FA3E3';
+    ctx.shadowBlur = 12; ctx.shadowColor = '#B3271E';
     ctx.stroke(); ctx.shadowBlur = 0;
     // Strand 2
     ctx.beginPath();
     points2.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
     ctx.strokeStyle = 'rgba(0,245,212,0.8)';
     ctx.lineWidth = 2.5;
-    ctx.shadowBlur = 12; ctx.shadowColor = '#7FC29B';
+    ctx.shadowBlur = 12; ctx.shadowColor = '#7A4A2B';
     ctx.stroke(); ctx.shadowBlur = 0;
     // Nodes
     for (let i = 0; i < 100; i += 8) {
       [points1[i], points2[i]].forEach((p,k) => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
-        ctx.fillStyle = k===0 ? '#4FA3E3' : '#7FC29B';
-        ctx.shadowBlur = 8; ctx.shadowColor = k===0 ? '#4FA3E3' : '#7FC29B';
+        ctx.fillStyle = k===0 ? '#B3271E' : '#7A4A2B';
+        ctx.shadowBlur = 8; ctx.shadowColor = k===0 ? '#B3271E' : '#7A4A2B';
         ctx.fill(); ctx.shadowBlur = 0;
       });
     }
@@ -265,8 +286,8 @@ if (orbCanvas) {
       const y = cy + (r*0.4) * Math.sin(a);
       ctx.beginPath();
       ctx.arc(x, y, 3 + k*0.5, 0, Math.PI*2);
-      ctx.fillStyle = '#7FC29B';
-      ctx.shadowBlur = 10; ctx.shadowColor = '#7FC29B';
+      ctx.fillStyle = '#7A4A2B';
+      ctx.shadowBlur = 10; ctx.shadowColor = '#7A4A2B';
       ctx.fill(); ctx.shadowBlur = 0;
     }
     t += 0.008;
@@ -338,7 +359,19 @@ document.querySelectorAll('.filter-tab').forEach(tab => {
 renderBlogCards();
 
 // ── SCROLL REVEAL ───────────────────────────────────────────
+function alternateSectionReveal() {
+  const skip = ['page-hero', 'neuro-hero', 'hero'];
+  let i = 0;
+  document.querySelectorAll('body > section').forEach(sec => {
+    if (skip.some(cls => sec.classList.contains(cls))) return;
+    if (sec.hasAttribute('data-reveal')) return;
+    sec.setAttribute('data-reveal', i % 2 === 0 ? 'left' : 'right');
+    i++;
+  });
+}
+
 function initReveal() {
+  alternateSectionReveal();
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -386,7 +419,7 @@ document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el
 const progressBar = document.createElement('div');
 progressBar.style.cssText = `
   position:fixed; top:0; left:0; height:2px; width:0%;
-  background:linear-gradient(90deg,#4FA3E3,#7FC29B);
+  background:linear-gradient(90deg,#B3271E,#7A4A2B);
   z-index:9999; transition:width 0.1s linear;
 `;
 document.body.appendChild(progressBar);
