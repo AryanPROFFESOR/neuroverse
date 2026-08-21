@@ -107,11 +107,12 @@ function typewriterEffect(element) {
 // ── HERO CANVAS — 3DMOL RIBBON & STICKY SCROLL ──────────
 const heroCanvas = document.getElementById('heroCanvas');
 const heroTrack = document.getElementById('heroTrack');
+const heroContentEl = document.querySelector('.hero__content');
 
 if (heroCanvas && window.$3Dmol) {
   // 1. Initialize the PyMOL-style viewer
   const viewer = $3Dmol.createViewer(heroCanvas, {
-    backgroundColor: 'rgba(0,0,0,0)'
+    backgroundColor: '#ffffff'
   });
 
   // 2. Pool of visually striking PDBs
@@ -158,13 +159,16 @@ if (heroCanvas && window.$3Dmol) {
     const proteinOpacity = Math.min(progress * 3.33, 0.85);
     heroCanvas.style.opacity = proteinOpacity;
 
-    // ANIMATION 2: Split the text
-    // The text pushes outwards as progress increases
+    // ANIMATION 2: Split the text and fade it out as the model takes over
     if (titleLines.length >= 3) {
       const offset = progress * 600;
       titleLines[0].style.transform = `translateX(${-offset}px)`;
       titleLines[1].style.transform = `translateX(${offset}px)`;
       titleLines[2].style.transform = `translateX(${-offset}px)`;
+    }
+    if (heroContentEl) {
+      const contentOpacity = Math.max(1 - progress * 1.7, 0);
+      heroContentEl.style.opacity = contentOpacity;
     }
   }, { passive: true });
 }
