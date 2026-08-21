@@ -124,8 +124,8 @@ body.cursor-active .cursor-ring { width: 60px; height: 60px; border-color: var(-
   padding: var(--space-xl);
 }
 .loader__logo {
-  width: min(320px, 62vw);
-  height: min(320px, 62vw);
+  width: clamp(260px, 42vw, 560px);
+  height: clamp(260px, 42vw, 560px);
   object-fit: contain;
   animation: heartbeat 1.35s ease-in-out infinite;
   filter: drop-shadow(0 0 34px rgba(179,39,30,0.32));
@@ -261,10 +261,12 @@ body.cursor-active .cursor-ring { width: 60px; height: 60px; border-color: var(-
   pointer-events: none; z-index: 0;
   opacity: 0;
   transition: opacity 0.1s linear;
+  background: var(--clr-bg);
 }
 .hero__canvas canvas {
   width: 100% !important;
   height: 100% !important;
+  background: var(--clr-bg) !important;
 }
 .hero__content {
   position: relative; z-index: 2;

@@ -114,6 +114,9 @@ if (heroCanvas && window.$3Dmol) {
   const viewer = $3Dmol.createViewer(heroCanvas, {
     backgroundColor: '#ffffff'
   });
+  // Belt-and-braces: some 3Dmol builds only fully apply the background
+  // color after the WebGL context exists, so set it again explicitly.
+  if (viewer.setBackgroundColor) viewer.setBackgroundColor(0xffffff, 1);
 
   // 2. Pool of visually striking PDBs
   const PDB_POOL = ['1GZX', '1CRN', '4HHB', '1UBQ', '2POR', '3CLN'];
@@ -124,7 +127,7 @@ if (heroCanvas && window.$3Dmol) {
     .then(response => response.text())
     .then(data => {
       viewer.addModel(data, 'pdb');
-      // Ribbon colored with the site's sky-blue / sage palette instead of a rainbow spectrum
+      // Ribbon colored with the site's red / brown palette instead of a rainbow spectrum
       viewer.setStyle({}, { cartoon: { colorscheme: { prop: 'resi', gradient: 'linear', min: 0, max: 200, colors: [0xB3271E, 0x7A4A2B] } } });
       viewer.zoomTo();
 
@@ -133,6 +136,7 @@ if (heroCanvas && window.$3Dmol) {
 
       // Continuous slow spin
       viewer.spin('y', 0.3);
+      if (viewer.setBackgroundColor) viewer.setBackgroundColor(0xffffff, 1);
       viewer.render();
     })
     .catch(err => console.error('Failed to load PDB:', err));
